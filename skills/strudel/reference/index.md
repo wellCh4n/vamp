@@ -1,0 +1,463 @@
+# Function index
+
+每行：`name` (synonyms) — 一句话说明 → 所在文件。详细说明和示例用 read_doc 读对应文件的该标题。
+
+## reference/controls.md
+
+- `s` (sound) — Select a sound / sample by name.
+- `wt` (wavetablePosition) — Position in the wavetable of the wavetable oscillator
+- `wtenv` — Amount of envelope applied wavetable oscillator's position envelope
+- `wtattack` (wtatt) — Attack time of the wavetable oscillator's position envelope
+- `wtdecay` (wtdec) — Decay time of the wavetable oscillator's position envelope
+- `wtsustain` (wtsus) — Sustain time of the wavetable oscillator's position envelope
+- `wtrelease` (wtrel) — Release time of the wavetable oscillator's position envelope
+- `wtrate` — Rate of the LFO for the wavetable oscillator's position
+- `wtsync` — cycle synced rate of the LFO for the wavetable oscillator's position
+- `wtdepth` — Depth of the LFO for the wavetable oscillator's position
+- `wtshape` — Shape of the LFO for the wavetable oscillator's position
+- `wtdc` — DC offset of the LFO for the wavetable oscillator's position
+- `wtskew` — Skew of the LFO for the wavetable oscillator's position
+- `warp` (wavetableWarp) — Amount of warp (alteration of the waveform) to apply to the wavetable oscillator
+- `warpattack` (warpatt) — Attack time of the wavetable oscillator's warp envelope
+- `warpdecay` (warpdec) — Decay time of the wavetable oscillator's warp envelope
+- `warpsustain` (warpsus) — Sustain time of the wavetable oscillator's warp envelope
+- `warprelease` (warprel) — Release time of the wavetable oscillator's warp envelope
+- `warprate` — Rate of the LFO for the wavetable oscillator's warp
+- `warpdepth` — Depth of the LFO for the wavetable oscillator's warp
+- `warpshape` — Shape of the LFO for the wavetable oscillator's warp
+- `warpdc` — DC offset of the LFO for the wavetable oscillator's warp
+- `warpskew` — Skew of the LFO for the wavetable oscillator's warp
+- `warpmode` (wavetableWarpMode) — Type of warp (alteration of the waveform) to apply to the wavetable oscillator.
+- `wtphaserand` (wavetablePhaseRand) — Amount of randomness of the initial phase of the wavetable oscillator.
+- `warpenv` — Amount of envelope applied wavetable oscillator's position envelope
+- `warpsync` — cycle synced rate of the LFO for the wavetable warp position
+- `source` (src) — Define a custom webaudio node to use as a sound source.
+- `n` — Selects the given index: for samples, it picks the sample by index, with wrap around for scales, it picks the scale degree for voicings, it 
+- `i` — Selects the given degree.
+- `note` — Plays the given note name or midi number.
+- `accelerate` — A pattern of numbers that speed up (or slow down) samples while they play.
+- `velocity` (vel) — Sets the velocity from 0 to 1.
+- `gain` — Controls the gain by an exponential amount.
+- `postgain` — Gain applied after all effects have been processed.
+- `amp` — Like `gain`, but linear.
+- `fmh` — Sets the Frequency Modulation Harmonicity Ratio.
+- `fmi` (fm) — Sets the Frequency Modulation of the synth.
+- `fmenv` (fme) — Ramp type of fm envelope.
+- `fmattack` (fmatt) — Attack time for the FM envelope: time it takes to reach maximum modulation A number may be added afterwards to control the attack of the env
+- `fmwave` — Waveform of the fm modulator A number may be added afterwards to control the waveform any of the 8 individual FMs (e.g.
+- `fmdecay` (fmdec) — Decay time for the FM envelope: seconds until the sustain level is reached after the attack phase.
+- `fmsustain` (fmsus) — Sustain level for the FM envelope: how much modulation is applied after the decay phase A number may be added afterwards to control the sust
+- `fmrelease` (fmrel) — Release time for the FM envelope: how much modulation is applied after the note is released A number may be added afterwards to control the 
+- `bank` — Select the sound bank to use.
+- `chorus` — mix control for the chorus effect
+- `attack` (att) — Amplitude envelope attack time: Specifies how long it takes for the sound to reach its peak value, relative to the onset.
+- `decay` (dec) — Amplitude envelope decay time: the time it takes after the attack time to reach the sustain level.
+- `sustain` (sus) — Amplitude envelope sustain level: The level which is reached after attack / decay, being sustained until the offset.
+- `release` (rel) — Amplitude envelope release time: The time it takes after the offset to go from sustain level to zero.
+- `bpf` (bandf, bp) — Sets the center frequency of the **b**and-**p**ass **f**ilter.
+- `bpq` (bandq) — Sets the **b**and-**p**ass **q**-factor (resonance).
+- `begin` — A pattern of numbers from 0 to 1.
+- `end` — The same as .begin, but cuts off the end off each sample.
+- `loop` — Loops the sample.
+- `loopBegin` (loopb) — Begin to loop at a specific point in the sample (inbetween `begin` and `end`).
+- `loopEnd` (loope) — End the looping section at a specific point in the sample (inbetween `begin` and `end`).
+- `crush` — Bit crusher effect.
+- `coarse` — Fake-resampling for lowering the sample rate.
+- `tremolo` (trem) — Modulate the amplitude of a sound with a continuous waveform
+- `tremolosync` (tremsync) — Modulate the amplitude of a sound with a continuous waveform
+- `tremolodepth` (tremdepth) — Depth of amplitude modulation
+- `tremoloskew` (tremskew) — Alter the shape of the modulation waveform
+- `tremolophase` (tremphase) — Alter the phase of the modulation waveform
+- `tremoloshape` (tremshape) — Shape of amplitude modulation
+- `drive` — Filter overdrive for supported filter types
+- `duckorbit` (duck) — Modulate the amplitude of an orbit to create a "sidechain" like effect.
+- `duckdepth` — The amount of ducking applied to target orbit Can vary across orbits with the ':' mininotation, e.g.
+- `duckonset` (duckons) — The time required for the ducked signal(s) to reach their lowest volume.
+- `duckattack` (duckatt, datt) — The time required for the ducked signal(s) to return to their normal volume.
+- `byteBeatExpression` (bbexpr, bb) — Create byte beats with custom expressions
+- `byteBeatStartTime` (bbst) — Create byte beats with custom expressions
+- `channels` (ch) — Allows you to set the output channels on the interface
+- `pw` — Controls the pulsewidth of the pulse oscillator
+- `pwrate` (pwr) — Controls the lfo rate for the pulsewidth of the pulse oscillator
+- `pwsweep` (pws) — Controls the lfo sweep for the pulsewidth of the pulse oscillator
+- `phaser` (ph) — Phaser audio effect that approximates popular guitar pedals.
+- `phasersweep` (phs) — The frequency sweep range of the lfo for the phaser effect.
+- `phasercenter` (phc) — The center frequency of the phaser in HZ.
+- `phaserdepth` (phd, phasdp) — The amount the signal is affected by the phaser effect.
+- `channel` — Choose the channel the pattern is sent to
+- `cut` — In the style of classic drum-machines, `cut` will stop a playing sample as soon as another samples with in same cutgroup is to be played.
+- `lpf` (cutoff, ctf, lp) — Applies the cutoff frequency of the **l**ow-**p**ass **f**ilter.
+- `lpenv` (lpe) — Sets the lowpass filter envelope modulation depth.
+- `hpenv` (hpe) — Sets the highpass filter envelope modulation depth.
+- `bpenv` (bpe) — Sets the bandpass filter envelope modulation depth.
+- `lpattack` (lpa) — Sets the attack duration for the lowpass filter envelope.
+- `hpattack` (hpa) — Sets the attack duration for the highpass filter envelope.
+- `bpattack` (bpa) — Sets the attack duration for the bandpass filter envelope.
+- `lpdecay` (lpd) — Sets the decay duration for the lowpass filter envelope.
+- `hpdecay` (hpd) — Sets the decay duration for the highpass filter envelope.
+- `bpdecay` (bpd) — Sets the decay duration for the bandpass filter envelope.
+- `lpsustain` (lps) — Sets the sustain amplitude for the lowpass filter envelope.
+- `hpsustain` (hps) — Sets the sustain amplitude for the highpass filter envelope.
+- `bpsustain` (bps) — Sets the sustain amplitude for the bandpass filter envelope.
+- `lprelease` (lpr) — Sets the release time for the lowpass filter envelope.
+- `hprelease` (hpr) — Sets the release time for the highpass filter envelope.
+- `bprelease` (bpr) — Sets the release time for the bandpass filter envelope.
+- `ftype` — Sets the filter type.
+- `fanchor` — controls the center of the filter envelope.
+- `hpf` (hp, hcutoff) — Applies the cutoff frequency of the **h**igh-**p**ass **f**ilter.
+- `lprate` — Rate of the LFO for the lowpass filter
+- `lpsync` — Cycle-synced rate of the LFO for the lowpass filter
+- `lpdepth` — Depth of the LFO for the lowpass filter
+- `lpdepthfrequency` (lpdepthfreq) — Depth of the LFO for the lowpass filter, in HZ
+- `lpshape` — Shape of the LFO for the lowpass filter
+- `lpdc` — DC offset of the LFO for the lowpass filter
+- `lpskew` — Skew of the LFO for the lowpass filter
+- `bprate` — Rate of the LFO for the bandpass filter
+- `bpsync` — Cycle-synced rate of the LFO for the bandpass filter
+- `bpdepth` — Depth of the LFO for the bandpass filter
+- `bpdepthfrequency` (bpdepthfreq) — Depth of the LFO for the bandpass filter, in HZ
+- `bpshape` — Shape of the LFO for the bandpass filter
+- `bpdc` — DC offset of the LFO for the bandpass filter
+- `bpskew` — Skew of the LFO for the bandpass filter
+- `hprate` — Rate of the LFO for the highpass filter
+- `hpsync` — Cycle-synced rate of the LFO for the highpass filter
+- `hpdepth` — Depth of the LFO for the highpass filter
+- `hpdepthfrequency` (hpdepthfreq) — Depth of the LFO for the hipass filter, in hz
+- `hpshape` — Shape of the LFO for the highpass filter
+- `hpdc` — DC offset of the LFO for the highpass filter
+- `hpskew` — Skew of the LFO for the highpass filter
+- `vib` (vibrato, v) — Applies a vibrato to the frequency of the oscillator.
+- `noise` — Adds pink noise to the mix
+- `vibmod` (vmod) — Sets the vibrato depth in semitones.
+- `hpq` (hresonance) — Controls the **h**igh-**p**ass **q**-value.
+- `lpq` (resonance) — Controls the **l**ow-**p**ass **q**-value.
+- `djf` — DJ filter, below 0.5 is low pass filter, above is high pass filter.
+- `delay` — Sets the level of the delay signal.
+- `delayfeedback` (delayfb, dfb) — Sets the level of the signal that is fed back into the delay.
+- `delayspeed` (delayt, dt) — Sets the time of the delay effect.
+- `delaytime` (delayt, dt) — Sets the time of the delay effect in seconds.
+- `delaysync` (delays, ds) — Sets the time of the delay effect in cycles.
+- `lock` — Specifies whether delaytime is calculated relative to cps.
+- `detune` (det) — Set detune for stacked voices of supported oscillators.
+- `unison` — Set number of stacked voices for supported oscillators.
+- `spread` — Set the stereo pan spread for supported oscillators
+- `dry` — Set dryness of reverb.
+- `fadeTime` (fadeOutTime) — Used when using `begin`/`end` or `chop`/`striate` and friends, to change the fade out time of the 'grain' envelope.
+- `freq` — Set frequency of sound.
+- `pattack` (patt) — Attack time of pitch envelope.
+- `pdecay` (pdec) — Decay time of pitch envelope.
+- `prelease` (prel) — Release time of pitch envelope
+- `penv` — Amount of pitch envelope.
+- `pcurve` — Curve of envelope.
+- `panchor` — Sets the range anchor of the envelope: anchor 0: range = [note, note + penv] anchor 1: range = [note - penv, note] If you don't set an ancho
+- `leslie` — Emulation of a Leslie speaker: speakers rotating in a wooden amplified cabinet.
+- `lrate` — Rate of modulation / rotation for leslie effect
+- `lsize` — Physical size of the cabinet in meters.
+- `label` — Sets the displayed text for an event on the pianoroll
+- `octave` (oct) — Sets the default octave of a synth.
+- `orbit` (o) — An `orbit` is a global parameter context for patterns.
+- `bus` — A `bus` is a send which can be used for mixing patterns.
+- `busgain` (bgain) — Postgain multiplier prior to sending the signal to the audio bus.
+- `pan` — Sets position in stereo.
+- `panspan` — Controls how much multichannel output is fanned out
+- `pansplay` — Controls how much multichannel output is spread
+- `chord` — The chord to voice
+- `dictionary` — Which dictionary to use for the voicings.
+- `anchor` — The top note to align the voicing to.
+- `offset` — Sets how the voicing is offset from the anchored position
+- `octaves` — How many octaves are voicing steps spread apart, defaults to 1
+- `mode` — How the voicing is aligned to the anchor `below`: top note <= anchor `duck`: top note <= anchor, anchor excluded `above`: bottom note >= anc
+- `room` — Sets the level of reverb.
+- `roomlp` (rlp) — Reverb lowpass starting frequency (in hertz).
+- `roomdim` (rdim) — Reverb lowpass frequency at -60dB (in hertz).
+- `roomfade` (rfade) — Reverb fade time (in seconds).
+- `iresponse` (ir) — Sets the sample to use as an impulse response for the reverb.
+- `irspeed` — Sets speed of the sample for the impulse response.
+- `irbegin` (ir) — Sets the beginning of the IR response sample
+- `roomsize` (rsize, sz, size) — Sets the room size of the reverb, see `room`.
+- `shape` — (Deprecated) Wave shaping distortion.
+- `distort` (dist) — Wave shaping distortion.
+- `distortvol` (distortion, distvol) — Postgain for waveshaping distortion.
+- `distorttype` (disttype) — Type of waveshaping distortion to apply.
+- `compressor` — Dynamics Compressor.
+- `speed` — Changes the speed of sample playback, i.e.
+- `stretch` — Changes the pitch of the sample without changing its speed.
+- `unit` — Used in conjunction with `speed`, accepts values of "r" (rate, default behavior), "c" (cycles), or "s" (seconds).
+- `squiz` — Made by Calum Gunn.
+- `vowel` — Formant filter to make things sound like vowels.
+- `density` — crackle noise density
+- `clip` (legato) — Multiplies the duration with the given number.
+- `duration` (dur) — Sets the duration of the event in cycles.
+- `color` (colour) — Sets the color of the hap in visualizations like pianoroll or highlighting.
+- `adsr` — ADSR envelope: Combination of Attack, Decay, Sustain, and Release.
+- `midichan` — MIDI channel: Sets the MIDI channel for the event.
+- `midiport` — MIDI port: Sets the MIDI port for the event.
+- `midicmd` — MIDI command: Sends a MIDI command message.
+- `control` — MIDI control: Sends a MIDI control change message.
+- `ccn` — MIDI control number: Sends a MIDI control change message.
+- `ccv` — MIDI control value: Sends a MIDI control change message.
+- `nrpnn` — MIDI NRPN non-registered parameter number: Sends a MIDI NRPN non-registered parameter number message.
+- `nrpv` — MIDI NRPN non-registered parameter value: Sends a MIDI NRPN non-registered parameter value message.
+- `progNum` — MIDI program number: Sends a MIDI program change message.
+- `sysex` — MIDI sysex: Sends a MIDI sysex message.
+- `sysexid` — MIDI sysex ID: Sends a MIDI sysex identifier message.
+- `sysexdata` — MIDI sysex data: Sends a MIDI sysex message.
+- `midibend` — MIDI pitch bend: Sends a MIDI pitch bend message.
+- `miditouch` — MIDI key after touch: Sends a MIDI key after touch message.
+- `oschost` — The host to send open sound control messages to.
+- `oscport` — The port to send open sound control messages to.
+- `as` — Sets properties in a batch.
+- `scrub` — Allows you to scrub an audio file like a tape loop by passing values that represents the position in the audio file in the optional array sy
+- `lfo` — Configures an LFO.
+- `env` — Configures an envelope.
+- `bmod` — Modulates with the output from a given `bus`.
+- `transient` — Transient shaper.
+
+## reference/pattern.md
+
+- `euclid` — Changes the structure of the pattern to form an Euclidean rhythm.
+- `euclidRot` — Like `euclid`, but has an additional parameter for 'rotating' the resulting sequence.
+- `euclidLegato` — Similar to `euclid`, but each pulse is held until the next pulse, so there will be no gaps.
+- `euclidLegatoRot` — Similar to `euclid`, but each pulse is held until the next pulse, so there will be no gaps, and has an additional parameter for 'rotating' t
+- `euclidish` (eish) — A 'euclid' variant with an additional parameter that morphs the resulting rhythm from 0 (no morphing) to 1 (completely 'even').
+- `clearScope` — Clears all user-defined variables and functions from the scope.
+- `layer` — Layers the result of the given function(s).
+- `superimpose` — Superimposes the result of the given function(s) on top of the original pattern:
+- `log` — Writes the content of the current event to the console (visible in the side menu).
+- `logValues` — A simplified version of `log` which writes all "values" (various configurable parameters) within the event to the console (visible in the si
+- `into` — Breaks a pattern into pieces according to the structure of a given pattern.
+- `arpWith` — Selects indices in in stacked notes.
+- `arp` — Selects indices in in stacked notes.
+- `add` — Assumes a pattern of numbers.
+- `sub` — Like add, but the given numbers are subtracted.
+- `mul` — Multiplies each number by the given factor.
+- `div` — Divides each number by the given factor.
+- `setDefaultJoin` — Sets the default method of combining events from two patterns (aka [alignment](https://strudel.cc/technical-manual/alignment/)) in Strudel.
+- `gap` — Does absolutely nothing, but with a given metrical 'steps'
+- `silence` — Does absolutely nothing..
+- `pure` — A discrete value that repeats once per cycle.
+- `sequenceP` — Takes a list of patterns, and returns a pattern of lists.
+- `stack` (polyrhythm, pr) — The given items are played at the same time at the same length.
+- `slowcat` (cat) — Concatenation: combines a list of patterns, switching between them successively, one per cycle.
+- `slowcatPrime` — Concatenation: combines a list of patterns, switching between them successively, one per cycle.
+- `cat` (slowcat) — The given items are con**cat**enated, where each one takes one cycle.
+- `arrange` — Allows to arrange multiple patterns together over multiple cycles.
+- `seqPLoop` — Similarly to `arrange`, allows you to arrange multiple patterns together over multiple cycles.
+- `sequence` — See `fastcat`
+- `seq` (fastcat) — Like **cat**, but the items are crammed into one cycle.
+- `register` — Registers a new pattern method.
+- `round` — Assumes a numerical pattern.
+- `floor` — Assumes a numerical pattern.
+- `ceil` — Assumes a numerical pattern.
+- `toBipolar` — Assumes a numerical pattern, containing unipolar values in the range 0 ..
+- `fromBipolar` — Assumes a numerical pattern, containing bipolar values in the range -1 ..
+- `range` — Assumes a numerical pattern, containing unipolar values in the range 0 ..
+- `rangex` — Assumes a numerical pattern, containing unipolar values in the range 0 ..
+- `range2` — Assumes a numerical pattern, containing bipolar values in the range -1 ..
+- `ratio` — Allows dividing numbers via list notation using ":".
+- `compress` — Compress each cycle into the given timespan, leaving a gap
+- `fastGap` (fastgap) — speeds up a pattern like fast, but rather than it playing multiple times as fast would it instead leaves a gap in the remaining space of the
+- `focus` — Similar to `compress`, but doesn't leave gaps, and the 'focus' can be bigger than a cycle
+- `ply` — The ply function repeats each event the given number of times.
+- `fast` (density) — Speed up a pattern by the given factor.
+- `hurry` — Both speeds up the pattern (like 'fast') and the sample playback (like 'speed').
+- `slow` (sparsity) — Slow down a pattern over the given number of cycles.
+- `inside` — Carries out an operation 'inside' a cycle.
+- `outside` — Carries out an operation 'outside' a cycle.
+- `lastOf` — Applies the given function every n cycles, starting from the last cycle.
+- `firstOf` — Applies the given function every n cycles, starting from the first cycle.
+- `every` — An alias for `firstOf`
+- `apply` — Applies the given function to the pattern.
+- `cpm` — Plays the pattern at the given cycles per minute.
+- `early` — Nudge a pattern to start earlier in time.
+- `late` — Nudge a pattern to start later in time.
+- `zoom` — Plays a portion of a pattern, specified by the beginning and end of a time span.
+- `bite` — Splits a pattern into the given number of slices, and plays them according to a pattern of slice numbers.
+- `linger` — Selects the given fraction of the pattern and repeats that part to fill the remainder of the cycle.
+- `segment` (seg) — Samples the pattern at a rate of n events per cycle.
+- `swingBy` — The function `swingBy x n` breaks each cycle into `n` slices, and then delays events in the second half of each slice by the amount `x`, whi
+- `swing` — Shorthand for swingBy with 1/3:
+- `invert` (inv) — Swaps 1s and 0s in a binary pattern.
+- `when` — Applies the given function whenever the given pattern is in a true state.
+- `off` — Superimposes the function result on top of the original pattern, delayed by the given time.
+- `brak` — Returns a new pattern where every other cycle is played once, twice as fast, and offset in time by one quarter of a cycle.
+- `rev` — Reverse all cycles in a pattern.
+- `revv` — Reverse a whole pattern.
+- `pressBy` — Like press, but allows you to specify the amount by which each event is shifted.
+- `press` — Syncopates a rhythm, by shifting each event halfway into its timespan.
+- `palindrome` — Applies `rev` to a pattern every other cycle, so that the pattern alternates between forwards and backwards.
+- `juxBy` (juxby) — Jux with adjustable stereo width.
+- `juxFlipBy` (juxflipby, fluxBy, fluxby) — Like juxBy, except it flips the ears each cycle.
+- `jux` — The jux function creates strange stereo effects, by applying a function to a pattern, but only in the right-hand channel.
+- `juxFlip` (juxflip, flux) — Like jux, but flips the ears each cycle.
+- `echoWith` (echowith, stutWith, stutwith) — Superimpose and offset multiple times, applying the given function each time.
+- `echo` — Superimpose and offset multiple times, gradually decreasing the velocity
+- `stut` — Deprecated.
+- `plyWith` (plywith) — The plyWith function repeats each event the given number of times, applying the given function to each event.\n
+- `plyForEach` (plyforeach) — The plyForEach function repeats each event the given number of times, applying the given function to each event.
+- `iter` — Divides a pattern into a given number of subdivisions, plays the subdivisions in order, but increments the starting subdivision each cycle.
+- `iterBack` (iterback) — Like `iter`, but plays the subdivisions in reverse order.
+- `repeatCycles` — Repeats each cycle the given number of times.
+- `chunk` (slowChunk, slowchunk) — Divides a pattern into a given number of parts, then cycles through those parts in turn, applying the given function to each part in turn (o
+- `chunkBack` (chunkback) — Like `chunk`, but cycles through the parts in reverse order.
+- `fastChunk` (fastchunk) — Like `chunk`, but the cycles of the source pattern aren't repeated for each set of chunks.
+- `chunkInto` (chunkinto) — Like `chunk`, but the function is applied to a looped subcycle of the source pattern.
+- `chunkBackInto` (chunkbackinto) — Like `chunkInto`, but moves backwards through the chunks.
+- `ribbon` (rib) — Loops the pattern inside an `offset` for `cycles`.
+- `tag` — Tags each Hap with an identifier.
+- `filter` — Filters haps using the given function
+- `filterWhen` — Filters haps by their begin time
+- `within` — Use within to apply a function to only a part of a pattern.
+- `pace` — *Experimental* Speeds a pattern up or down, to fit to the given number of steps per cycle.
+- `polymeter` (pm) — *Experimental* Aligns the steps of the patterns, creating polymeters.
+- `stepcat` (timeCat, timecat) — 'Concatenates' patterns like `fastcat`, but proportional to a number of steps per cycle.
+- `stepalt` — *Experimental* Concatenates patterns stepwise, according to an inferred 'steps per cycle'.
+- `take` — *Experimental* Takes the given number of steps from a pattern (dropping the rest).
+- `drop` — *Experimental* Drops the given number of steps from a pattern.
+- `extend` — *Experimental* `extend` is similar to `fast` in that it increases its density, but it also increases the step count accordingly.
+- `replicate` — *Experimental* `replicate` is similar to `fast` in that it increases its density, but it also increases the step count accordingly.
+- `expand` — *Experimental* Expands the step size of the pattern by the given factor.
+- `contract` — *Experimental* Contracts the step size of the pattern by the given factor.
+- `shrink` — *Experimental* Progressively shrinks the pattern by 'n' steps until there's nothing left, or if a second value is given (using mininotation 
+- `grow` — *Experimental* Progressively grows the pattern by 'n' steps until the full pattern is played, or if a second value is given (using mininotat
+- `tour` — *Experimental* Inserts a pattern into a list of patterns.
+- `zip` — *Experimental* 'zips' together the steps of the provided patterns.
+- `chop` — Cuts each sample into the given number of parts, allowing you to explore a technique known as 'granular synthesis'.
+- `striate` — Cuts each sample into the given number of parts, triggering progressive portions of each sample at each loop.
+- `loopAt` — Makes the sample fit the given number of cycles by changing the speed.
+- `slice` — Chops samples into the given number of slices, triggering those slices with a given pattern of slice numbers.
+- `onTriggerTime` — make something happen on event time uses browser timeout which is innacurate for audio tasks
+- `splice` — Works the same as slice, but changes the playback speed of each slice to match the duration of its step.
+- `fit` — Makes the sample fit its event duration.
+- `loopAtCps` — Makes the sample fit the given number of cycles and cps value, by changing the speed.
+- `xfade` — Cross-fades between left and right from 0 to 1: 0 = (full left, no right) .5 = (both equal) 1 = (no left, full right)
+- `beat` — creates a structure pattern from divisions of a cycle especially useful for creating rhythms
+- `morph` — Takes two binary rhythms represented as lists of 1s and 0s, and a number between 0 and 1 that morphs between them.
+- `soft` — Soft-clipping distortion
+- `hard` — Hard-clipping distortion
+- `cubic` — Cubic polynomial distortion
+- `diode` — Diode-emulating distortion
+- `asym` — Asymmetrical diode distortion
+- `fold` — Wavefolding distortion
+- `sinefold` — Wavefolding distortion composed with sinusoid
+- `chebyshev` — Distortion via Chebyshev polynomials
+- `parray` — Turns a list of patterns into a single pattern which outputs list-values
+- `partials` — Scale the magnitude of the harmonics of one of the core synths ('sine', 'tri', 'saw', ..) Can also be used to create a new synth via `s('use
+- `phases` — Rotates the harmonics of one of the core synths ('sine', 'tri', 'saw', 'user', ..) by a list of phases
+- `FX` — Establishes an FX chain.
+- `K` — Produces a [Kabelsalat](https://kabel.salat.dev/) modular sound engine.
+- `worklet` — Creates a worklet effect.
+- `base` — Creates a pattern of numbers in base b from a number or pattern of numbers limited to d digits long from the right
+- `pick` — Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
+- `pickmod` — The same as `pick`, but if you pick a number greater than the size of the list, it wraps around, rather than sticking at the maximum value.
+- `pickF` — pickF lets you use a pattern of numbers to pick which function to apply to another pattern.
+- `pickmodF` — The same as `pickF`, but if you pick a number greater than the size of the functions list, it wraps around, rather than sticking at the maxi
+- `pickOut` — Similar to `pick`, but it applies an outerJoin instead of an innerJoin.
+- `pickmodOut` — The same as `pickOut`, but if you pick a number greater than the size of the list, it wraps around, rather than sticking at the maximum valu
+- `pickRestart` — Similar to `pick`, but the choosen pattern is restarted when its index is triggered.
+- `pickmodRestart` — The same as `pickRestart`, but if you pick a number greater than the size of the list, it wraps around, rather than sticking at the maximum 
+- `pickReset` — Similar to `pick`, but the choosen pattern is reset when its index is triggered.
+- `pickmodReset` — The same as `pickReset`, but if you pick a number greater than the size of the list, it wraps around, rather than sticking at the maximum va
+- `inhabit` (pickSqueeze) — Picks patterns (or plain values) either from a list (by index) or a lookup table (by name).
+- `inhabitmod` (pickmodSqueeze) — The same as `inhabit`, but if you pick a number greater than the size of the list, it wraps around, rather than sticking at the maximum valu
+- `squeeze` — Pick from the list of values (or patterns of values) via the index using the given pattern of integers.
+- `setcpm` — Changes the global tempo to the given cycles per minute
+- `all` — Applies a function to all the running patterns.
+- `each` — Applies a function to each of the running patterns separately.
+- `getFreq` — (no description)
+- `midi2note` — (no description)
+
+## reference/signals.md
+
+- `saw` — A sawtooth signal between 0 and 1.
+- `saw2` — A sawtooth signal between -1 and 1 (like `saw`, but bipolar).
+- `isaw` — A sawtooth signal between 1 and 0 (like `saw`, but flipped).
+- `isaw2` — A sawtooth signal between 1 and -1 (like `saw2`, but flipped).
+- `sine2` — A sine signal between -1 and 1 (like `sine`, but bipolar).
+- `sine` — A sine signal between 0 and 1.
+- `cosine` — A cosine signal between 0 and 1.
+- `cosine2` — A cosine signal between -1 and 1 (like `cosine`, but bipolar).
+- `square` — A square signal between 0 and 1.
+- `square2` — A square signal between -1 and 1 (like `square`, but bipolar).
+- `isquare` — A square signal between 1 and 0 (like `square` but flipped).
+- `isquare2` — A square signal between 1 and -1 (like `isquare`, but bipolar).
+- `tri` — A triangle signal between 0 and 1.
+- `tri2` — A triangle signal between -1 and 1 (like `tri`, but bipolar).
+- `itri` — An inverted triangle signal between 1 and 0 (like `tri`, but flipped).
+- `itri2` — An inverted triangle signal between -1 and 1 (like `itri`, but bipolar).
+- `time` — A signal representing the cycle time.
+- `mousex` — The mouse's x position value ranges from 0 to 1.
+- `mousey` — The mouse's y position value ranges from 0 to 1.
+- `useRNG` — Sets which random number generator to use.
+- `run` — A discrete pattern of numbers from 0 to n-1
+- `binary` — Creates a binary pattern from a number.
+- `binaryN` — Creates a binary pattern from a number, padded to n bits long.
+- `binaryL` — Creates a binary list pattern from a number.
+- `binaryNL` — Creates a binary list pattern from a number, padded to n bits long.
+- `randL` — Creates a list of random numbers of the given length
+- `shuffle` — Slices a pattern into the given number of parts, then plays those parts in random order.
+- `scramble` — Slices a pattern into the given number of parts, then plays those parts at random.
+- `withSeed` — Modify a pattern by applying a function to the `randomSeed` control if present
+- `seed` — Change the seed for random signals.
+- `rand` — A continuous pattern of random numbers, between 0 and 1.
+- `rand2` — A continuous pattern of random numbers, between -1 and 1
+- `brandBy` — A continuous pattern of 0 or 1 (binary random), with a probability for the value being 1
+- `brand` — A continuous pattern of 0 or 1 (binary random)
+- `irand` — A continuous pattern of random integers, between 0 and n-1.
+- `chooseWith` — Choose from the list of values (or patterns of values) using the given pattern of numbers, which should be in the range of 0..1
+- `chooseInWith` — As with {chooseWith}, but the structure comes from the chosen values, rather than the pattern you're using to choose with.
+- `choose` — Chooses randomly from the given list of elements.
+- `chooseCycles` (randcat) — Picks one of the elements at random each cycle.
+- `wchoose` — Chooses randomly from the given list of elements by giving a probability to each element
+- `wchooseCycles` (wrandcat) — Picks one of the elements at random each cycle by giving a probability to each element
+- `perlin` — Generates a continuous pattern of [perlin noise](https://en.wikipedia.org/wiki/Perlin_noise), in the range 0..1.
+- `berlin` — Generates a continuous pattern of [berlin noise](conceived by Jame Coyne and Jade Rowland as a joke but turned out to be surprisingly cool a
+- `degradeBy` — Randomly removes events from the pattern by a given amount.
+- `degrade` — Randomly removes 50% of events from the pattern.
+- `undegradeBy` — Inverse of `degradeBy`: Randomly removes events from the pattern by a given amount.
+- `undegrade` — Inverse of `degrade`: Randomly removes 50% of events from the pattern.
+- `sometimesBy` — Randomly applies the given function by the given probability.
+- `sometimes` — Applies the given function with a 50% chance
+- `someCyclesBy` — Randomly applies the given function by the given probability on a cycle by cycle basis.
+- `someCycles` — Shorthand for `.someCyclesBy(0.5, fn)`
+- `often` — Shorthand for `.sometimesBy(0.75, fn)`
+- `rarely` — Shorthand for `.sometimesBy(0.25, fn)`
+- `almostNever` — Shorthand for `.sometimesBy(0.1, fn)`
+- `almostAlways` — Shorthand for `.sometimesBy(0.9, fn)`
+- `never` — Shorthand for `.sometimesBy(0, fn)` (never calls fn)
+- `always` — Shorthand for `.sometimesBy(1, fn)` (always calls fn)
+- `whenKey` — Do something on a keypress, or array of keypresses [Key name reference](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_
+- `keyDown` — returns true when a key or array of keys is held [Key name reference](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_ev
+- `cyclesPer` — A pattern measuring the duration of events, in cycles per event.
+- `per` (perCycle) — A pattern measuring the 'shortness' of events, or in other words, the duration of pattern events, in events per cycle.
+- `perx` — Like `per` but measures the shortness of events according to an exponential curve.
+
+## reference/tonal.md
+
+- `transpose` (trans) — Change the pitch of each value by the given amount.
+- `scaleTranspose` (scaleTrans, strans) — Transposes notes inside the scale by the number of steps.
+- `scale` — Turns numbers into notes in the scale (zero indexed) or quantizes notes to a scale.
+- `addVoicings` — Adds a new custom voicing dictionary.
+- `voicings` — DEPRECATED: still works, but it is recommended you use .voicing instead (without s).
+- `rootNotes` — Maps the chords of the incoming pattern to root notes in the given octave.
+- `voicing` — Turns chord symbols into voicings.
+
+## reference/samples.md
+
+- `getDur` — Returns the duration, in seconds, of the given sample.
+- `samples` — Loads a collection of samples to use with `s`
+- `setMaxPolyphony` — Set the max polyphony.
+- `setGainCurve` — Apply a function to all gains provided in patterns.
+- `aliasBank` — Register an alias for a bank of sounds.
+- `soundAlias` — Register an alias for a sound.
+
+## reference/draw.md
+
+- `drawLine` — Intended for a debugging, drawLine renders the pattern as a string, where each character represents the same time span.
+- `pianoroll` (punchcard) — Visualises a pattern as a scrolling 'pianoroll', displayed in the background of the editor.
+- `wordfall` — Displays a vertical pianoroll with event labels.
+- `pitchwheel` — Renders a pitch circle to visualize frequencies within one octave
+- `spiral` — Displays a spiral visual.
+- `fscope` — Renders an oscilloscope for the frequency domain of the audio signal.
+- `scope` (tscope) — Renders an oscilloscope for the time domain of the audio signal.
+- `spectrum` — Renders a spectrum analyzer for the incoming audio signal.

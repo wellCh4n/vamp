@@ -1,0 +1,148 @@
+# Drum pattern index
+
+来源：Strudel 官方 REPL 的 drum_patterns.mjs，原始数据来自 https://github.com/lvm/tidal-drum-patterns （GPL-3.0），用 https://github.com/urswilke/read_beats 转换。
+
+按曲风分文件，每个文件里每个鼓型一个二级标题。鼓型都是 `stack("...", "...").s().slow(2)` 的形式：每行一个鼓件，`[x ~ ~ ~]` 一组是一拍（16 分音符），4 组一小节，`slow(2)` 把两小节摊到两个 cycle。
+
+用法：把 `.s()` 里加上 `.bank("RolandTR909")` 换音色；把某一行拿出来单独用 `$: s("...")`。
+
+- [Afro](examples/drums/afro.md) (18): Afro1a, Afro1b, Afro1c, Afro2a, Afro2b, Afro2c, Afro3a, Afro3b, Afro3c, Afro4a, Afro4b, Afro4c, Afro5a, Afro5b, Afro5c, Afro6a, Afro6b, Afro6c
+- [Ageispolis](examples/drums/ageispolis.md) (1): Ageispolis
+- [Amen](examples/drums/amen.md) (1): Amen
+- [AmenBrother](examples/drums/amen-brother.md) (1): AmenBrother
+- [AshleysRoachClip](examples/drums/ashleys-roach-clip.md) (1): AshleysRoachClip
+- [Autobahn](examples/drums/autobahn.md) (2): Autobahn1a, Autobahn1b
+- [Ballad](examples/drums/ballad.md) (15): Ballad1a, Ballad1b, Ballad1c, Ballad2a, Ballad2b, Ballad2c, Ballad3a, Ballad3b, Ballad3c, Ballad4a, Ballad4b, Ballad4c, Ballad5a, Ballad5b, Ballad5c
+- [BigBeat](examples/drums/big-beat.md) (1): BigBeat
+- [BillyJean](examples/drums/billy-jean.md) (1): BillyJean
+- [BlueMonday](examples/drums/blue-monday.md) (2): BlueMonday1a, BlueMonday2a
+- [Blues](examples/drums/blues.md) (2): Blues1a, Blues2a
+- [BookOfMoses](examples/drums/book-of-moses.md) (1): BookOfMoses
+- [BootsNCats](examples/drums/boots-ncats.md) (1): BootsNCats
+- [Bossa](examples/drums/bossa.md) (6): Bossa1a, Bossa1b, Bossa1c, Bossa2a, Bossa2b, Bossa2c
+- [Bouton](examples/drums/bouton.md) (1): Bouton
+- [Break](examples/drums/break.md) (2): Break1, Break2
+- [Breakbeat](examples/drums/breakbeat.md) (3): Breakbeat1, Breakbeat2, Breakbeat3
+- [BritHouse](examples/drums/brit-house.md) (1): BritHouse
+- [ChaChaCha](examples/drums/cha-cha-cha.md) (3): ChaChaCha1a, ChaChaCha1b, ChaChaCha1c
+- [ChugChugChugaLug](examples/drums/chug-chug-chuga-lug.md) (1): ChugChugChugaLug
+- [CissyStrutLong](examples/drums/cissy-strut-long.md) (1): CissyStrutLong
+- [CissyStrutShort](examples/drums/cissy-strut-short.md) (1): CissyStrutShort
+- [ColdSweat](examples/drums/cold-sweat.md) (1): ColdSweat
+- [ColdSweatOpening](examples/drums/cold-sweat-opening.md) (1): ColdSweatOpening
+- [ComeDancing](examples/drums/come-dancing.md) (1): ComeDancing
+- [ContemporaryKick](examples/drums/contemporary-kick.md) (7): ContemporaryKick1a, ContemporaryKick1b, ContemporaryKick2a, ContemporaryKick2b, ContemporaryKick3a, ContemporaryKick3b, ContemporaryKick4
+- [ContemporarySnare](examples/drums/contemporary-snare.md) (6): ContemporarySnare1a, ContemporarySnare1b, ContemporarySnare2a, ContemporarySnare2b, ContemporarySnare3a, ContemporarySnare3b
+- [CowdBell](examples/drums/cowd-bell.md) (1): CowdBell
+- [DasModel](examples/drums/das-model.md) (2): DasModel1a, DasModel1b
+- [DeeperHouse](examples/drums/deeper-house.md) (1): DeeperHouse
+- [DeepHouse](examples/drums/deep-house.md) (1): DeepHouse
+- [DirtyHouse](examples/drums/dirty-house.md) (1): DirtyHouse
+- [Disco](examples/drums/disco.md) (15): Disco1a, Disco1b, Disco1c, Disco2a, Disco2b, Disco2c, Disco3a, Disco3b, Disco3c, Disco4a, Disco4b, Disco4c, Disco5a, Disco5b, Disco5c
+- [Dnb](examples/drums/dnb.md) (6): Dnb1a, Dnb1b, Dnb2a, Dnb3, Dnb4a, Dnb4b
+- [Drumroll](examples/drums/drumroll.md) (19): Drumroll1, Drumroll10, Drumroll11, Drumroll12, Drumroll13, Drumroll14, Drumroll15, Drumroll16, Drumroll17, Drumroll18, Drumroll19, Drumroll2, Drumroll3, Drumroll4, Drumroll5, Drumroll6, Drumroll7, Drumroll8, Drumroll9
+- [Dubstep](examples/drums/dubstep.md) (2): Dubstep1a, Dubstep1b
+- [DubstepRatcheted](examples/drums/dubstep-ratcheted.md) (1): DubstepRatcheted
+- [Electro](examples/drums/electro.md) (6): Electro1a, Electro1b, Electro2a, Electro2b, Electro3a, Electro3b
+- [End](examples/drums/end.md) (2): End1a, End1b
+- [ExpensiveShit](examples/drums/expensive-shit.md) (1): ExpensiveShit
+- [ExpressYourself](examples/drums/express-yourself.md) (1): ExpressYourself
+- [Footwork](examples/drums/footwork.md) (2): Footwork1, Footwork2
+- [FourOnTheFloor](examples/drums/four-on-the-floor.md) (1): FourOnTheFloor
+- [FrenchHouse](examples/drums/french-house.md) (1): FrenchHouse
+- [Funk](examples/drums/funk.md) (43): Funk10a, Funk10b, Funk10c, Funk11a, Funk11b, Funk11c, Funk12a, Funk12b, Funk12c, Funk13a, Funk13b, Funk13c, Funk14a, Funk14b, Funk14c, Funk15a, Funk1a, Funk1b, Funk1c, Funk2a, Funk2b, Funk2c, Funk3a, Funk3b, Funk3c, Funk4a, Funk4b, Funk4c, Funk5a, Funk5b, Funk5c, Funk6a, Funk6b, Funk6c, Funk7a, Funk7b, Funk7c, Funk8a, Funk8b, Funk8c, Funk9a, Funk9b, Funk9c
+- [FunkyDrummer](examples/drums/funky-drummer.md) (2): FunkyDrummer, FunkyDrummerAlt
+- [FunkyPresident](examples/drums/funky-president.md) (1): FunkyPresident
+- [GenericBossaNova](examples/drums/generic-bossa-nova.md) (1): GenericBossaNova
+- [GenericGahu](examples/drums/generic-gahu.md) (1): GenericGahu
+- [GenericRock](examples/drums/generic-rock.md) (1): GenericRock
+- [GenericRumba](examples/drums/generic-rumba.md) (1): GenericRumba
+- [GenericShiko](examples/drums/generic-shiko.md) (1): GenericShiko
+- [GenericSon](examples/drums/generic-son.md) (1): GenericSon
+- [GenericSoukous](examples/drums/generic-soukous.md) (1): GenericSoukous
+- [GetUp](examples/drums/get-up.md) (1): GetUp
+- [GhostSnare](examples/drums/ghost-snare.md) (4): GhostSnare1a, GhostSnare1b, GhostSnare2a, GhostSnare2b
+- [GoodToGo](examples/drums/good-to-go.md) (1): GoodToGo
+- [GrooveMe](examples/drums/groove-me.md) (1): GrooveMe
+- [HaitianDivorce](examples/drums/haitian-divorce.md) (1): HaitianDivorce
+- [HalfDrop](examples/drums/half-drop.md) (1): HalfDrop
+- [Haus](examples/drums/haus.md) (1): Haus
+- [Hiphop](examples/drums/hiphop.md) (15): Hiphop, Hiphop1a, Hiphop1b, Hiphop1c, Hiphop2a, Hiphop2b, Hiphop3a, Hiphop3b, Hiphop4a, Hiphop4b, Hiphop5, Hiphop6, Hiphop7, Hiphop8, HiphopAlt
+- [HipHop](examples/drums/hip-hop.md) (1): HipHop
+- [HookAndSling](examples/drums/hook-and-sling.md) (1): HookAndSling
+- [HotSweat](examples/drums/hot-sweat.md) (1): HotSweat
+- [House](examples/drums/house.md) (2): House1a, House1b
+- [HybridKick](examples/drums/hybrid-kick.md) (11): HybridKick1a, HybridKick1b, HybridKick1c, HybridKick1d, HybridKick1e, HybridKick1f, HybridKick1g, HybridKick2a, HybridKick2b, HybridKick3a, HybridKick3b
+- [IGotTheFeelin](examples/drums/igot-the-feelin.md) (1): IGotTheFeelin
+- [IGotYou](examples/drums/igot-you.md) (1): IGotYou
+- [ImpeachThePresident](examples/drums/impeach-the-president.md) (1): ImpeachThePresident
+- [Irregular](examples/drums/irregular.md) (5): Irregular1a, Irregular1b, Irregular2a, Irregular2b, Irregular3
+- [ItaloDisco](examples/drums/italo-disco.md) (2): ItaloDisco1a, ItaloDisco1b
+- [ItsANewDay](examples/drums/its-anew-day.md) (1): ItsANewDay
+- [Juke](examples/drums/juke.md) (1): Juke
+- [Jungle](examples/drums/jungle.md) (4): Jungle, Jungle1a, Jungle1b, JungleAlt
+- [Kick](examples/drums/kick.md) (1): Kick
+- [KissingMyLove](examples/drums/kissing-my-love.md) (1): KissingMyLove
+- [KnocksOffMyFeet](examples/drums/knocks-off-my-feet.md) (1): KnocksOffMyFeet
+- [Lady](examples/drums/lady.md) (1): Lady
+- [LadyMarmalade](examples/drums/lady-marmalade.md) (1): LadyMarmalade
+- [LetAWomanBeAWomanLetAManBeAMan](examples/drums/let-awoman-be-awoman-let-aman-be-aman.md) (1): LetAWomanBeAWomanLetAManBeAMan
+- [LookingForThePerfectBeat](examples/drums/looking-for-the-perfect-beat.md) (2): LookingForThePerfectBeat1a, LookingForThePerfectBeat1b
+- [Lookkapypy](examples/drums/lookkapypy.md) (1): Lookkapypy
+- [MiamiBass](examples/drums/miami-bass.md) (2): MiamiBass1, MiamiBass2
+- [MoreBounceToTheOunce](examples/drums/more-bounce-to-the-ounce.md) (1): MoreBounceToTheOunce
+- [MotherPopcorn](examples/drums/mother-popcorn.md) (1): MotherPopcorn
+- [MusicNonStop](examples/drums/music-non-stop.md) (3): MusicNonStop1a, MusicNonStop2a, MusicNonStop2b
+- [NewWave](examples/drums/new-wave.md) (1): NewWave
+- [Nico](examples/drums/nico.md) (1): Nico
+- [Numbers](examples/drums/numbers.md) (2): Numbers1a, Numbers1b
+- [OneDrop](examples/drums/one-drop.md) (1): OneDrop
+- [OneSevenFiveThirteen](examples/drums/one-seven-five-thirteen.md) (1): OneSevenFiveThirteen
+- [OohChild](examples/drums/ooh-child.md) (1): OohChild
+- [PalmGrease](examples/drums/palm-grease.md) (1): PalmGrease
+- [PapaWasToo](examples/drums/papa-was-too.md) (1): PapaWasToo
+- [Pattern](examples/drums/pattern.md) (64): Pattern00, Pattern01, Pattern02, Pattern03, Pattern04, Pattern05, Pattern06, Pattern07, Pattern08, Pattern09, Pattern10, Pattern11, Pattern12, Pattern13, Pattern14, Pattern15, Pattern16, Pattern17, Pattern18, Pattern19, Pattern20, Pattern21, Pattern22, Pattern23, Pattern24, Pattern25, Pattern26, Pattern27, Pattern28, Pattern29, Pattern30, Pattern31, Pattern32, Pattern33, Pattern34, Pattern35, Pattern36, Pattern37, Pattern38, Pattern39, Pattern40, Pattern41, Pattern42, Pattern43, Pattern44, Pattern45, Pattern46, Pattern47, Pattern48, Pattern49, Pattern50, Pattern51, Pattern52, Pattern53, Pattern54, Pattern55, Pattern56, Pattern57, Pattern58, Pattern59, Pattern60, Pattern61, Pattern62, Pattern63
+- [PlanetRock](examples/drums/planet-rock.md) (1): PlanetRock
+- [Poly](examples/drums/poly.md) (2): Poly1a, Poly1b
+- [Pop](examples/drums/pop.md) (15): Pop1a, Pop1b, Pop1c, Pop2a, Pop2b, Pop2c, Pop3a, Pop3b, Pop3c, Pop4a, Pop4b, Pop4c, Pop5a, Pop5b, Pop5c
+- [Poptech](examples/drums/poptech.md) (1): Poptech2010
+- [Reggae](examples/drums/reggae.md) (13): Reggae1a, Reggae1b, Reggae1c, Reggae2a, Reggae2b, Reggae2c, Reggae3a, Reggae3b, Reggae3c, Reggae4a, Reggae5a, Reggae5b, Reggae5c
+- [Reggaeton](examples/drums/reggaeton.md) (1): Reggaeton
+- [RespectYourself](examples/drums/respect-yourself.md) (1): RespectYourself
+- [RNB](examples/drums/rnb.md) (15): RNB1a, RNB1b, RNB1c, RNB2a, RNB2b, RNB2c, RNB3a, RNB3b, RNB3c, RNB4a, RNB4b, RNB4c, RNB5a, RNB5b, RNB5c
+- [Rock](examples/drums/rock.md) (15): Rock1a, Rock1b, Rock1c, Rock2a, Rock2b, Rock2c, Rock3a, Rock3b, Rock3c, Rock4a, Rock4b, Rock4c, Rock5a, Rock5b, Rock5c
+- [RockSteady](examples/drums/rock-steady.md) (1): RockSteady
+- [RockThePlanet](examples/drums/rock-the-planet.md) (1): RockThePlanet
+- [RollinBreak](examples/drums/rollin-break.md) (1): RollinBreak
+- [Rolling](examples/drums/rolling.md) (18): Rolling1, Rolling10, Rolling11, Rolling2, Rolling3a, Rolling3b, Rolling4a, Rolling4b, Rolling5a, Rolling5b, Rolling6a, Rolling7a, Rolling7b, Rolling7c, Rolling7d, Rolling8, Rolling9a, Rolling9b
+- [Sally](examples/drums/sally.md) (1): Sally
+- [Samba](examples/drums/samba.md) (9): Samba1a, Samba1b, Samba1c, Samba2a, Samba2b, Samba2c, Samba3a, Samba3b, Samba3c
+- [Shuffle](examples/drums/shuffle.md) (2): Shuffle1a, Shuffle2a
+- [SiberianNights](examples/drums/siberian-nights.md) (1): SiberianNights
+- [Ska](examples/drums/ska.md) (3): Ska1a, Ska1b, Ska1c
+- [SlowDeepHouse](examples/drums/slow-deep-house.md) (1): SlowDeepHouse
+- [Steppers](examples/drums/steppers.md) (1): Steppers
+- [Strbtsdcgogo](examples/drums/strbtsdcgogo.md) (1): Strbtsdcgogo100
+- [Supersonic](examples/drums/supersonic.md) (4): Supersonic1a, Supersonic1b, Supersonic2a, Supersonic2b
+- [Superstition](examples/drums/superstition.md) (1): Superstition
+- [Swing](examples/drums/swing.md) (3): Swing1a, Swing2a, Swing3a
+- [SynthethicSubstitution](examples/drums/synthethic-substitution.md) (1): SynthethicSubstitution
+- [SynthWave](examples/drums/synth-wave.md) (1): SynthWave
+- [TakeMeToMardiGras](examples/drums/take-me-to-mardi-gras.md) (2): TakeMeToMardiGras, TakeMeToMardiGrasAlt
+- [Techno](examples/drums/techno.md) (1): Techno
+- [TheFez](examples/drums/the-fez.md) (1): TheFez
+- [TheSameBlood](examples/drums/the-same-blood.md) (1): TheSameBlood
+- [TheTrillsGone](examples/drums/the-trills-gone.md) (1): TheTrillsGone
+- [TinyHouse](examples/drums/tiny-house.md) (1): TinyHouse
+- [TransEuroExpress](examples/drums/trans-euro-express.md) (1): TransEuroExpress
+- [Trap](examples/drums/trap.md) (2): Trap1a, Trap1b
+- [Twist](examples/drums/twist.md) (6): Twist1a, Twist1b, Twist1c, Twist2a, Twist2b, Twist2c
+- [TwoDrop](examples/drums/two-drop.md) (1): TwoDrop
+- [UkGarage](examples/drums/uk-garage.md) (2): UkGarage1a, UkGarage1b
+- [UnconventionalSnare](examples/drums/unconventional-snare.md) (8): UnconventionalSnare1a, UnconventionalSnare1b, UnconventionalSnare2a, UnconventionalSnare2b, UnconventionalSnare3a, UnconventionalSnare3b, UnconventionalSnare4a, UnconventionalSnare4b
+- [UnknownDrummer](examples/drums/unknown-drummer.md) (1): UnknownDrummer
+- [UseMe](examples/drums/use-me.md) (2): UseMe, UseMeAlt
+- [WalkThisWay](examples/drums/walk-this-way.md) (1): WalkThisWay
+- [WeWillRockYou](examples/drums/we-will-rock-you.md) (1): WeWillRockYou
+- [WhenTheLeveeBreaks](examples/drums/when-the-levee-breaks.md) (1): WhenTheLeveeBreaks
+- [YaMama](examples/drums/ya-mama.md) (1): YaMama

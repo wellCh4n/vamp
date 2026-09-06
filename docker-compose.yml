@@ -1,0 +1,25 @@
+name: vamp
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: vamp-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: vibe
+      POSTGRES_PASSWORD: vibe
+      POSTGRES_DB: vibe
+    ports:
+      # 本机 5432 常被别的服务占用，这里映射到 5436
+      - '5436:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U vibe -d vibe']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
+    name: vamp-pgdata
