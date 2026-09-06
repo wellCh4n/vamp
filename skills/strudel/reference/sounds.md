@@ -102,9 +102,9 @@ agogo(5), anvil(9), balafon（按音高）, balafon_hard（按音高）, balafon
 
 ## Chinese traditional
 
-本项目自带（public/samples/chinese-traditional）。二胡 `erhu`（长音）`erhu_stacc`（短音）`erhu_soft`（弱奏），按音高，音域 D4–A5（erhu_soft 到 D6），`n` 选轮替；笛子 `dizi`（C 调梆笛，按音高，G4–G6）；京剧锣鼓（单击，`n` 选第几个）：板鼓 `bangu`、小锣 `xiaoluo`、大锣 `daluo`、铙钹 `naobo`。来源与授权见 public/samples/chinese-traditional/README.md。
+本项目自带（public/samples/chinese-traditional）。京剧锣鼓（单击采样，`n` 选第几个）：板鼓 `bangu`、小锣 `xiaoluo`、大锣 `daluo`、铙钹 `naobo`。来源与授权见 public/samples/chinese-traditional/README.md。
 
-bangu(59), daluo(50), dizi（按音高）, erhu（按音高）, erhu_soft（按音高）, erhu_stacc（按音高）, naobo(62), xiaoluo(65)
+bangu(59), daluo(50), naobo(62), xiaoluo(65)
 
 ## GM soundfonts（125 个，按需从 CDN 加载，第一次触发会稍有延迟）
 

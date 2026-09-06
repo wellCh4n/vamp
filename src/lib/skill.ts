@@ -4,20 +4,28 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 /**
- * Strudel skill（skills/strudel/）的服务端读取：
- * - SKILL.md 正文进系统提示（去掉 frontmatter）
- * - 其余 markdown 由 Agent 通过 read_doc / search_docs 工具按需读取
+ * skills/ 下各 skill 的服务端读取：
+ * - 每个 skill 目录一个 SKILL.md，正文（去掉 frontmatter）按顺序拼进系统提示：strudel 在前，其余按目录名排序。
+ * - 其余 markdown 由 Agent 通过 read_doc / search_docs 工具按需读取。
+ *   路径规则：strudel 是默认 skill，路径相对 skills/strudel/（如 learn/effects.md）；
+ *   其他 skill 的路径带目录名前缀（如 music-theory/melody.md）。
  *
- * 目录内容由 scripts/build-strudel-skill.mjs 生成，启动后整目录读进内存（约 1MB）。
+ * 启动后整目录读进内存（约 1MB）；开发模式下文件有改动会自动重读。
  */
 
-const SKILL_DIR = path.join(process.cwd(), 'skills', 'strudel')
+const SKILLS_DIR = path.join(process.cwd(), 'skills')
+/** 默认 skill：路径不带前缀 */
+const DEFAULT_SKILL = 'strudel'
 /** read_doc 单次最多返回的字符数，超出时只返回大纲 */
 export const MAX_DOC_CHARS = 24_000
 const MAX_SEARCH_RESULTS = 20
 
 interface SkillFile {
+  /** 对 Agent 可见的路径：默认 skill 不带前缀，其他 skill 带 `<skill>/` 前缀 */
   path: string
+  skill: string
+  /** 相对 skill 目录的路径 */
+  rel: string
   content: string
   lines: string[]
 }
@@ -25,6 +33,7 @@ interface SkillFile {
 let cache: Map<string, SkillFile> | undefined
 /** 开发模式下用来判断缓存是否过期：目录里 .md 的最新修改时间 */
 let cacheStamp = 0
+let looseIndex: Map<string, string> | undefined
 
 function latestMtime(dir: string): number {
   let latest = 0
@@ -36,48 +45,72 @@ function latestMtime(dir: string): number {
   return latest
 }
 
+/** 有 SKILL.md 的目录才算 skill；默认 skill 排最前 */
+function skillDirs(): string[] {
+  return fs
+    .readdirSync(SKILLS_DIR, { withFileTypes: true })
+    .filter((e) => e.isDirectory() && fs.existsSync(path.join(SKILLS_DIR, e.name, 'SKILL.md')))
+    .map((e) => e.name)
+    .sort((a, b) => (a === DEFAULT_SKILL ? -1 : b === DEFAULT_SKILL ? 1 : a.localeCompare(b)))
+}
+
+function publicPath(skill: string, rel: string) {
+  return skill === DEFAULT_SKILL ? rel : `${skill}/${rel}`
+}
+
 function loadAll(): Map<string, SkillFile> {
-  // 生产环境只读一次；开发时 npm run skill:build 或手改 SKILL.md 后不用重启 dev server
+  // 生产环境只读一次；开发时 npm run skill:build 或手改 markdown 后不用重启 dev server
   if (cache && process.env.NODE_ENV !== 'development') return cache
-  if (cache) {
-    const stamp = latestMtime(SKILL_DIR)
-    if (stamp === cacheStamp) return cache
-    looseIndex = undefined
-  }
-  cacheStamp = latestMtime(SKILL_DIR)
+  if (cache && latestMtime(SKILLS_DIR) === cacheStamp) return cache
+  looseIndex = undefined
+  cacheStamp = latestMtime(SKILLS_DIR)
   const files = new Map<string, SkillFile>()
-  const walk = (dir: string) => {
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      const full = path.join(dir, entry.name)
-      if (entry.isDirectory()) walk(full)
-      else if (entry.name.endsWith('.md')) {
-        const rel = path.relative(SKILL_DIR, full).split(path.sep).join('/')
-        const content = fs.readFileSync(full, 'utf8')
-        files.set(rel, { path: rel, content, lines: content.split('\n') })
+  for (const skill of skillDirs()) {
+    const root = path.join(SKILLS_DIR, skill)
+    const walk = (dir: string) => {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name)
+        if (entry.isDirectory()) walk(full)
+        else if (entry.name.endsWith('.md')) {
+          const rel = path.relative(root, full).split(path.sep).join('/')
+          const content = fs.readFileSync(full, 'utf8')
+          const p = publicPath(skill, rel)
+          files.set(p, { path: p, skill, rel, content, lines: content.split('\n') })
+        }
       }
     }
+    walk(root)
   }
-  walk(SKILL_DIR)
   cache = files
   return files
 }
 
-/** SKILL.md 正文（不含 frontmatter），拼进系统提示 */
+const isSkillIndex = (f: SkillFile) => f.rel === 'SKILL.md'
+
+/** 所有 skill 的 SKILL.md 正文（不含 frontmatter），拼进系统提示 */
 export function getSkillPrompt(): string {
-  const skill = loadAll().get('SKILL.md')
-  if (!skill) throw new Error('skills/strudel/SKILL.md 不存在，请先运行 npm run skill:build')
-  return skill.content.replace(/^---\n[\s\S]*?\n---\n/, '').trim()
+  const files = loadAll()
+  const parts = skillDirs()
+    .map((skill) => files.get(publicPath(skill, 'SKILL.md')))
+    .filter((f): f is SkillFile => !!f)
+    .map((f) => f.content.replace(/^---\n[\s\S]*?\n---\n/, '').trim())
+  if (!parts.length) throw new Error('skills/*/SKILL.md 不存在，请先运行 npm run skill:build')
+  return parts.join('\n\n')
 }
 
 export function listDocs(): string[] {
-  return [...loadAll().keys()].filter((p) => p !== 'SKILL.md').sort()
+  return [...loadAll().values()]
+    .filter((f) => !isSkillIndex(f))
+    .map((f) => f.path)
+    .sort()
 }
 
 function normalizePath(p: string) {
   return p
     .trim()
     .replace(/^\.?\//, '')
-    .replace(/^skills\/strudel\//, '')
+    .replace(/^skills\//, '')
+    .replace(new RegExp(`^${DEFAULT_SKILL}/`), '')
     .replace(/\\/g, '/')
 }
 
@@ -89,8 +122,6 @@ function looseKey(p: string) {
     .replace(/[_\s]+/g, '-')
     .toLowerCase()
 }
-
-let looseIndex: Map<string, string> | undefined
 
 function resolveFile(rel: string): SkillFile | undefined {
   const files = loadAll()
@@ -129,7 +160,7 @@ export interface ReadResult {
 export function readDoc(rawPath: string, heading?: string): ReadResult {
   const rel = normalizePath(rawPath)
   const file = resolveFile(rel)
-  if (!file || file.path === 'SKILL.md') {
+  if (!file || isSkillIndex(file)) {
     const suggestions = listDocs()
       .filter((p) => p.includes(path.basename(rel, '.md')))
       .slice(0, 5)
@@ -182,7 +213,7 @@ export function searchDocs(query: string, limit = MAX_SEARCH_RESULTS): SearchHit
   if (!terms.length) return []
   const hits: (SearchHit & { score: number })[] = []
   for (const file of loadAll().values()) {
-    if (file.path === 'SKILL.md') continue
+    if (isSkillIndex(file)) continue
     let heading = ''
     file.lines.forEach((line, i) => {
       if (headingLevel(line) > 0) heading = headingText(line)

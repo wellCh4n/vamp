@@ -27,7 +27,7 @@ description: 用 Strudel（Tidal Cycles 的 JavaScript 移植）写 live coding 
 ## 本项目环境
 
 - 代码在浏览器里通过 Strudel REPL 运行，`set_code` 工具会整体替换编辑器内容并播放。
-- 已预加载的音色：鼓机采样（`bank("RolandTR909")` 等）、`piano`、VCSL 乐器、uzu-drumkit、Dirt-Samples 杂项（`casio jazz metal insect wind east crow space numbers` 等）、GM soundfont（`gm_*`）、中国传统乐器（二胡 `erhu`、笛子 `dizi`、京剧锣鼓 `bangu xiaoluo daluo naobo`）。
+- 已预加载的音色：鼓机采样（`bank("RolandTR909")` 等）、`piano`、VCSL 乐器、uzu-drumkit、Dirt-Samples 杂项（`casio jazz metal insect wind east crow space numbers` 等）、GM soundfont（`gm_*`）、京剧锣鼓（`bangu xiaoluo daluo naobo`）。
 - 不要调用 `samples()` 加载外部资源，除非用户明确要求；MIDI / OSC / 麦克风 / 鼠标信号不可用。
 - 编辑器下方自带 pianoroll / 波形 / 频谱，代码里不需要 `_pianoroll()`、`_scope()` 之类的可视化调用。
 - 触发时错误（比如音色不存在）会在 `set_code` 的结果里返回，读错误信息修正后再调一次。
@@ -64,7 +64,7 @@ description: 用 Strudel（Tidal Cycles 的 JavaScript 移植）写 live coding 
 
 - `s("bd hh sd oh")` / `sound()`。默认鼓件：`bd sd rim cp hh oh cr rd ht mt lt sh cb tb perc misc fx`；配 `.bank("RolandTR909")`（常用 `RolandTR808 RolandTR909 RolandTR707 RolandTR505 AkaiLinn RhythmAce ViscoSpaceDrum CasioRZ1`）。
 - 杂项采样：`casio insect wind jazz metal east crow space numbers`；钢琴 `piano`；GM 乐器 `gm_electric_guitar_muted gm_acoustic_bass gm_synth_bass_1 gm_synth_strings_1 gm_xylophone gm_voice_oohs gm_accordion gm_flute gm_lead_6_voice gm_epiano1 gm_pad_2_warm` 等（`gm_` + GM 乐器名小写下划线）。
-- 中国传统乐器：二胡 `erhu`（长音）`erhu_stacc`（短音）`erhu_soft`（弱奏），按音高，音域 D4–A5（`erhu_soft` 到 D6），`note("d4 e4 g4 a4").s("erhu").clip(1)`；笛子 `dizi`（按音高，G4–G6，`note("g5 a5 b5 d6").s("dizi")`）；京剧锣鼓 `bangu`（板鼓）`xiaoluo`（小锣）`daluo`（大锣）`naobo`（铙钹），单击采样用 `n` 选，如 `s("bangu*4, ~ xiaoluo ~ daluo").n("<0 3 7>")`；古筝用越南筝 `dantranh`（`dantranh_tremolo` `dantranh_vibrato`）或 `gm_koto`；锣鼓 `gong gong2 woodblock gm_taiko_drum`；扬琴 `gm_dulcimer`、唢呐 `gm_shanai`、箫 `gm_shakuhachi`、笛 `gm_pan_flute`。中国五声：`.scale("D:major:pentatonic")`。
+- 京剧锣鼓 `bangu`（板鼓）`xiaoluo`（小锣）`daluo`（大锣）`naobo`（铙钹），单击采样用 `n` 选，如 `s("bangu*4, ~ xiaoluo ~ daluo").n("<0 3 7>")`；古筝用越南筝 `dantranh`（`dantranh_tremolo` `dantranh_vibrato`）或 `gm_koto`；锣鼓 `gong gong2 woodblock gm_taiko_drum`；扬琴 `gm_dulcimer`、唢呐 `gm_shanai`、箫 `gm_shakuhachi`、笛 `gm_pan_flute`。中国五声：`.scale("D:major:pentatonic")`。
 - 合成器：`sine sawtooth(saw) square triangle(tri) supersaw`，噪声 `white pink brown crackle`，ZZFX `z_sawtooth z_tan z_noise z_sine z_square`。只写 `note()` 不写 `s()` 默认 `triangle`。
 - `n("0 1 [4 2]").s("jazz")` 选采样序号；对 `.scale()` 是音阶度数。
 - 合成器参数：`.noise(.2)`；FM `.fm(4).fmh(1.5)` 加 `fmattack fmdecay fmsustain fmenv`；颤音 `.vib("4:.5")`；supersaw `.unison(7).detune(.2).spread(.5)`。
@@ -197,7 +197,7 @@ note("[c eb g <f bb>](3,8,<0 1>)".sub(12))
 - `reference/tonal.md`（7 项）：transpose, scaleTranspose, scale, addVoicings, voicings, rootNotes, voicing
 - `reference/samples.md`（6 项）：getDur, samples, setMaxPolyphony, setGainCurve, aliasBank, soundAlias
 - `reference/draw.md`（8 项）：drawLine, pianoroll, wordfall, pitchwheel, spiral, fscope, scope, spectrum
-- `reference/sounds.md` — 本项目预加载的全部音色名：71 个鼓机 bank 及各自的鼓件、默认鼓组、Dirt-Samples 218 组、VCSL 128 组、中国传统乐器 8 组、GM soundfont 125 个（不确定某个音色名是否存在时查这里，heading 可用 "Drum machines" / "Dirt-Samples" / "Chinese traditional" / "GM soundfonts" 等）
+- `reference/sounds.md` — 本项目预加载的全部音色名：71 个鼓机 bank 及各自的鼓件、默认鼓组、Dirt-Samples 218 组、VCSL 128 组、中国传统乐器 4 组、GM soundfont 125 个（不确定某个音色名是否存在时查这里，heading 可用 "Drum machines" / "Dirt-Samples" / "Chinese traditional" / "GM soundfonts" 等）
 
 ### 示例曲（examples/tunes.md，32 首，heading = 曲名）
 

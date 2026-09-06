@@ -18,7 +18,7 @@ import {
  * - LLM 调用通过 streamProxy 走 /api/stream（服务端持 Key、拼系统提示）。
  * - set_code 工具在浏览器执行：写入编辑器并播放，失败时 throw，pi 会把错误作为
  *   tool result 交回模型，模型自行修正。
- * - read_doc / search_docs 工具读 skills/strudel/ 里的资料（服务端 /api/skill/*），
+ * - read_doc / search_docs 工具读 skills/ 下各 skill 的资料（服务端 /api/skill/*），
  *   让模型按需查语法、函数参考、示例曲和鼓型，而不是把整个资料库塞进系统提示。
  * - beforeToolCall 分别限制每次用户输入最多调几次 set_code / 查几次资料，避免无限循环。
  */
@@ -65,7 +65,7 @@ export function createSetCodeTool(host: AgentHost): AgentTool<typeof SetCodePara
 }
 
 const ReadDocParams = Type.Object({
-  path: Type.String({ description: '相对 skill 目录的文件路径，例如 learn/effects.md、reference/controls.md、examples/drums/funk.md' }),
+  path: Type.String({ description: '文件路径。Strudel 资料相对 skills/strudel/，例如 learn/effects.md、reference/controls.md、examples/drums/funk.md；其他 skill 带目录前缀，例如 music-theory/melody.md' }),
   heading: Type.Optional(Type.String({ description: '只读这个标题下的段落（例如函数名 lpf 或曲名 swimming），省略则读整个文件' })),
 })
 
@@ -97,7 +97,7 @@ export function createReadDocTool(): AgentTool<typeof ReadDocParams, { path: str
     name: READ_DOC_TOOL,
     label: '查阅资料',
     description:
-      '读取 Strudel skill 资料库里的一个 markdown 文件，或只读其中一个标题下的段落。文件列表见系统提示里的"文件索引"。长文件不带 heading 时只返回大纲。',
+      '读取资料库（Strudel 文档、乐理）里的一个 markdown 文件，或只读其中一个标题下的段落。文件列表见系统提示里各 skill 的索引。长文件不带 heading 时只返回大纲。',
     parameters: ReadDocParams,
     executionMode: 'parallel',
     execute: async (_toolCallId, params) => {
@@ -118,7 +118,7 @@ export function createSearchDocsTool(): AgentTool<typeof SearchDocsParams, { que
   return {
     name: SEARCH_DOCS_TOOL,
     label: '搜索资料',
-    description: '在 Strudel skill 资料库里全文搜索（函数名、曲风、采样名、关键词），返回命中的文件、标题和行，然后用 read_doc 读对应段落。',
+    description: '在资料库（Strudel 文档、乐理）里全文搜索（函数名、曲风、采样名、乐理关键词），返回命中的文件、标题和行，然后用 read_doc 读对应段落。',
     parameters: SearchDocsParams,
     executionMode: 'parallel',
     execute: async (_toolCallId, params) => {

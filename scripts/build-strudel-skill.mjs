@@ -424,8 +424,8 @@ const SAMPLE_SOURCES = [
 const LOCAL_SAMPLE_MAPS = [
   [
     'chinese-traditional',
-    ['strudel.json', 'erhu.json'],
-    '二胡 `erhu`（长音）`erhu_stacc`（短音）`erhu_soft`（弱奏），按音高，音域 D4–A5（erhu_soft 到 D6），`n` 选轮替；笛子 `dizi`（C 调梆笛，按音高，G4–G6）；京剧锣鼓（单击，`n` 选第几个）：板鼓 `bangu`、小锣 `xiaoluo`、大锣 `daluo`、铙钹 `naobo`。来源与授权见 public/samples/chinese-traditional/README.md。',
+    ['strudel.json'],
+    '京剧锣鼓（单击采样，`n` 选第几个）：板鼓 `bangu`、小锣 `xiaoluo`、大锣 `daluo`、铙钹 `naobo`。来源与授权见 public/samples/chinese-traditional/README.md。',
   ],
 ]
 

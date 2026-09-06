@@ -1,7 +1,7 @@
 import { READ_DOC_TOOL, SEARCH_DOCS_TOOL, SET_CODE_TOOL } from '@/lib/agent-model'
 
 /**
- * 系统提示 = AGENT_INSTRUCTIONS + skills/strudel/SKILL.md（见 src/lib/skill.ts）。
+ * 系统提示 = AGENT_INSTRUCTIONS + 每个 skill 的 SKILL.md（strudel 在前，其后 music-theory 等；见 src/lib/skill.ts）。
  * SKILL.md 是速查和资料索引；更细的语法、函数参考、示例曲、鼓型由模型用 read_doc / search_docs 按需读取。
  */
 
@@ -18,6 +18,7 @@ export const AGENT_INSTRUCTIONS = `你是 Vamp 里的音乐搭档，用 Strudel�
 - 只使用速查或资料库里出现过的函数和采样名，没见过的函数不要猜；拿不准就查。
 - 多轨用 \`$: \` 前缀，每轨一行或几行；用 setcpm(bpm/4) 设速度。
 - 优先使用自带音色：鼓用 bd sd hh oh cp rim 配 .bank("RolandTR909" | "RolandTR808" | "RolandTR707" 等)，旋律用 piano、gm_* 乐器或 sawtooth / square / triangle / sine。
+- 先定调、拍号、速度，旋律和 bass 用 n().scale() 写度数，和声按小节走、bass 走根音、旋律强拍落在和弦音上——遵守乐理 skill 里的"底线"；要写旋律、和声或整曲时先读 music-theory/checklist.md 的检查清单。
 - 让音乐有起伏：用 gain 做重音、< > 做小节间变化、sometimes / every 加变化、lpf / room / delay 塑造空间。
 - 代码要能直接运行：括号匹配，mini-notation 用双引号，注释用 //。
 

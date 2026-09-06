@@ -1,36 +1,8 @@
 # 中国传统乐器采样（chinese-traditional）
 
-两份 Strudel 采样映射，都由 `src/lib/strudel.ts` 在启动时加载：
+`strudel.json` 是 Strudel 采样映射，由 `src/lib/strudel.ts` 在启动时加载，`_base` 指向本目录，mp3 随项目发布。
 
-- `strudel.json`：随项目发布的 mp3（笛子、京剧锣鼓），`_base` 指向本目录。
-- `erhu.json`：二胡，`_base` 指向来源仓库的 raw.githubusercontent.com 地址（带 CORS 头），音频不在仓库里、按需加载。
-  分成两个文件是因为 superdough 的 `_base` 是整份映射共用的，本地路径和远程 URL 不能混在一份里。
-
-Strudel 用科学音高记法（c4 = MIDI 60）；下面两个来源的文件名八度都比科学记法高 1，映射里已按实测音高修正。
-
-## 二胡 `erhu` / `erhu_stacc` / `erhu_soft`
-
-- 来源：[sfzinstruments/aliexpress-erhu](https://github.com/sfzinstruments/aliexpress-erhu)，CC0 1.0（公有领域）。
-  一把 AliExpress 买的便宜二胡，近距立体声录音，演奏者是小提琴手。
-- `erhu`：长音（sus），`erhu_stacc`：短音（stac），`erhu_soft`：弱奏 sul tasto（st）。
-  每个音 2 个轮替（`erhu_stacc` 4 个），用 `n("0 1")` 切换。
-- 音域 D4 到 A5（`erhu_soft` 到 D6），半音全齐，超出范围会变速取最近的采样。
-- 来源文件 `erhu_d5` 实测约 293 Hz，即 D4。
-
-```js
-note("d4 e4 g4 a4 d5").s("erhu").clip(1).room(.4)
-```
-
-## 笛子 `dizi`
-
-- 来源：Freesound pack [Flute Dizi C all notes + pitched semitones](https://freesound.org/people/Hypnotriod/packs/21613/)，作者 Hypnotriod，CC0 1.0。
-- C 调笛，25 个半音，G4 到 G6（来源文件按 MIDI 号 67–91 命名，实测音高与 MIDI 号一致）。
-  自然音是实录，半音是作者移调得到的。
-- 处理：16-bit 单声道 wav 转 mp3（libmp3lame VBR q3），峰值归一到 -1 dBFS。每个音约 8 秒，用 `clip` / `release` 控制长度。
-
-```js
-note("g5 a5 b5 d6 e6").s("dizi").clip(1).delay(.3)
-```
+如果以后要加指向外部 URL 的映射，另开一份 json：superdough 的 `_base` 是整份映射共用的，本地路径和远程 URL 不能混。
 
 ## 京剧锣鼓 `bangu` / `xiaoluo` / `daluo` / `naobo`
 

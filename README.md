@@ -45,7 +45,7 @@ OPENAI_MODEL=deepseek-chat
 - 编辑器：工具栏是播放器式的停止 / 播放（暂停）图标按钮，暂停后再按播放从原处继续，停止回到开头；播放中改了代码会多出一个热更新按钮。快捷键 `⌘/Ctrl + Enter` 播放 / 热更新，`⌘/Ctrl + .` 停止。正在响的 mini-notation 会高亮。编辑器下方可切换可视化：音符（pianoroll）、波形（示波器）、频谱。播放是工程级别的，切到别的工程会自动停止。
 - Agent 面板：描述你想要的音乐，模型通过 `set_code` 工具把完整代码写进编辑器并播放；播放报错会自动回传给模型修正（每次输入最多 4 次 `set_code`）。Agent 运行中还可以继续说话，消息会在当前步骤后插入（pi 的 steering）。
 - Agent 的 Strudel 知识以 skill 的形式渐进式提供（见下）：系统提示里只有速查和索引，模型需要时用 `read_doc` / `search_docs` 工具查函数参考、示例曲和鼓型（每次输入最多 8 次）。
-- 第一次播放会从 strudel CDN 下载采样（鼓机、钢琴、VCSL、Dirt-Samples），`gm_*` 音色来自 soundfonts，按需加载。中国传统乐器在 `public/samples/chinese-traditional/`：笛子 `dizi` 和京剧锣鼓 `bangu xiaoluo daluo naobo` 的 mp3 随项目发布，二胡 `erhu` 的映射指向 CC0 来源仓库按需加载，来源与授权见该目录 README。
+- 第一次播放会从 strudel CDN 下载采样（鼓机、钢琴、VCSL、Dirt-Samples），`gm_*` 音色来自 soundfonts，按需加载。京剧锣鼓 `bangu xiaoluo daluo naobo` 在 `public/samples/chinese-traditional/`，mp3 随项目发布，来源与授权见该目录 README。
 - 播放过程中的错误（比如音色不存在）会显示在编辑器下方，并作为工具结果回传给 Agent；上游过载 / 限流会自动重试两次。
 - 导出：代码工具栏的"导出"按钮离线渲染指定的 cycle 区间（起始 cycle、cycle 数、44.1k / 48k）并下载 16-bit WAV。pattern 是无限循环的，所以要自己选一段；导出前会停止播放，完成后自动恢复音频。实现在 `src/lib/strudel.ts` 的 `exportAudio`，没有直接用 `@strudel/webaudio` 1.3.0 的 `renderPatternAudio`，因为它内部的音频控制器带着一份私有 AudioContext，混响 / 延迟发送会报错。
 
@@ -60,6 +60,12 @@ OPENAI_MODEL=deepseek-chat
 | `reference/` | 从源码 JSDoc 生成的函数参考（controls / pattern / signals / tonal / samples / draw，443 项）、`index.md` 每函数一行、`sounds.md` 本项目预加载的全部音色名 | `search_docs(query)` 搜到再 `read_doc` 读一个标题 |
 | `examples/tunes.md` | 官方 REPL 的 32 首示例曲 | `read_doc("examples/tunes.md", heading="曲名")` |
 | `examples/drums/` | 492 个按曲风分文件的鼓型（Funk、Afro、Disco、House、Dnb、Reggaeton…） | 用户点名曲风时读对应文件 |
+
+## Music theory skill（乐理）
+
+`skills/music-theory/` 是独立于 Strudel 的手写乐理资料，目的是让 Agent 写出来的东西符合乐理：`SKILL.md` 是七条"底线"和索引（进系统提示），`checklist.md` 是写曲前后的检查清单和默认方案，其余按主题分篇：调与音阶、和弦进行、bass 与声部、旋律、节奏拍号与速度、编排、中国五声调式，每篇都给 Strudel 写法。Agent 用 `read_doc("music-theory/melody.md")` 这样带目录前缀的路径读取。
+
+服务端（`src/lib/skill.ts`）会把 `skills/` 下每个带 `SKILL.md` 的目录都当作一个 skill：SKILL.md 正文按顺序拼进系统提示（strudel 在前），其他 markdown 通过 `read_doc` / `search_docs` 访问，strudel 的路径不带前缀，其余 skill 带目录名前缀。
 
 服务端 `src/lib/skill.ts` 启动时把整个目录读进内存，`GET /api/skill/read` 和 `GET /api/skill/search` 提供给浏览器里的工具；`read_doc` 的 `heading` 参数只返回一个标题下的段落，长文件不带 heading 只返回大纲。
 
