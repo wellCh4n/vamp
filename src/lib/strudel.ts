@@ -24,7 +24,8 @@ import type { EditorView } from '@codemirror/view'
  * Strudel 引擎封装（对应官方 REPL 的 StrudelMirror，但不接管主题 / DOM）。
  *
  * - 只初始化一次（React StrictMode 下 effect 会跑两次）。
- * - 默认加载和官方 REPL 一样的音色：鼓机、钢琴、VCSL 乐器、Dirt-Samples 杂项、GM soundfonts。
+ * - 默认加载和官方 REPL 一样的音色：鼓机、钢琴、VCSL 乐器、Dirt-Samples 杂项、GM soundfonts，
+ *   外加本项目自带的中国传统乐器（public/samples/chinese-traditional：二胡、笛子、京剧锣鼓）。
  * - 通过 attachEditor() 挂上 CodeMirror 视图后，会把 mini-notation 位置和
  *   当前播放的事件高亮同步到编辑器里。
  * - 监听 Strudel 的日志事件，把"触发时"的错误（例如音色不存在）也暴露出来。
@@ -148,6 +149,9 @@ async function loadDefaultSamples() {
     samples(`${CDN}/uzu-drumkit.json`, `${CDN}/uzu-drumkit/`, { prebake: true, tag: 'drum-machines' }),
     // workshop 里用到的 casio / jazz / metal / insect / wind / east / space / numbers 等
     samples('github:tidalcycles/dirt-samples'),
+    // 中国传统乐器：笛子、京剧锣鼓的 mp3 随项目发布；二胡映射指向来源仓库（CC0），音频按需加载
+    samples('/samples/chinese-traditional/strudel.json', undefined, { prebake: true }),
+    samples('/samples/chinese-traditional/erhu.json', undefined, { prebake: true }),
   ])
   // 让 bank("tr909") 这种简写也能用
   await aliasBank(`${CDN}/tidal-drum-machines-alias.json`)

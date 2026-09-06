@@ -43,3 +43,6 @@ next-env.d.ts
 
 # strudel 源码缓存（npm run skill:build）
 /.cache
+
+# 手动下载的采样包（已转换到 public/samples/，不进仓库）
+/*.zip

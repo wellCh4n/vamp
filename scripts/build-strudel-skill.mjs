@@ -420,6 +420,14 @@ const SAMPLE_SOURCES = [
   ['vcsl.json', `${CDN}/vcsl.json`],
   ['dirt-samples.json', 'https://raw.githubusercontent.com/tidalcycles/dirt-samples/main/strudel.json'],
 ]
+/** 本项目自带的映射（public/samples/<dir>/*.json），直接读本地文件；一个目录可有多份映射 */
+const LOCAL_SAMPLE_MAPS = [
+  [
+    'chinese-traditional',
+    ['strudel.json', 'erhu.json'],
+    '二胡 `erhu`（长音）`erhu_stacc`（短音）`erhu_soft`（弱奏），按音高，音域 D4–A5（erhu_soft 到 D6），`n` 选轮替；笛子 `dizi`（C 调梆笛，按音高，G4–G6）；京剧锣鼓（单击，`n` 选第几个）：板鼓 `bangu`、小锣 `xiaoluo`、大锣 `daluo`、铙钹 `naobo`。来源与授权见 public/samples/chinese-traditional/README.md。',
+  ],
+]
 
 async function fetchJson(name, url) {
   const cacheFile = path.join(path.dirname(SRC), 'strudel-samples', name)
@@ -447,6 +455,11 @@ function fmtList(entries) {
 async function buildSounds() {
   const data = {}
   for (const [name, url] of SAMPLE_SOURCES) data[name] = await fetchJson(name, url)
+  const local = LOCAL_SAMPLE_MAPS.map(([dir, files, desc]) => [
+    dir,
+    desc,
+    Object.assign({}, ...files.map((f) => JSON.parse(fs.readFileSync(path.join(ROOT, 'public', 'samples', dir, f), 'utf8')))),
+  ])
   const gmSource = fs.readFileSync(path.join(ROOT, 'node_modules', '@strudel', 'soundfonts', 'gm.mjs'), 'utf8')
   const gm = [...gmSource.matchAll(/^\s{2}(gm_\w+):/gm)].map((m) => m[1])
 
@@ -480,9 +493,18 @@ async function buildSounds() {
   lines.push('', '## Piano', '', fmtList(sampleEntries(data['piano.json'])), '', '`note("c e g").s("piano")` 或 `.piano()`。')
   lines.push('', '## Dirt-Samples（Tidal 经典采样包，括号里是同名采样个数，用 `n` 选择）', '', fmtList(sampleEntries(data['dirt-samples.json'])))
   lines.push('', '## VCSL（Versilian 乐器采样，多为打击乐 / 民族乐器）', '', fmtList(sampleEntries(data['vcsl.json'])))
+  for (const [dir, desc, map] of local) {
+    lines.push('', '## Chinese traditional', '', `本项目自带（public/samples/${dir}）。${desc}`, '', fmtList(sampleEntries(map)))
+  }
   lines.push('', `## GM soundfonts（${gm.length} 个，按需从 CDN 加载，第一次触发会稍有延迟）`, '', '用 `note("c e g").s("gm_epiano1")`。', '', gm.join(', '))
   write('reference/sounds.md', lines.join('\n'))
-  return { banks: banks.size, dirt: sampleEntries(data['dirt-samples.json']).length, vcsl: sampleEntries(data['vcsl.json']).length, gm: gm.length }
+  return {
+    banks: banks.size,
+    dirt: sampleEntries(data['dirt-samples.json']).length,
+    vcsl: sampleEntries(data['vcsl.json']).length,
+    local: local.reduce((n, [, , map]) => n + sampleEntries(map).length, 0),
+    gm: gm.length,
+  }
 }
 
 // ---------- 5. SKILL.md 索引 & 附注 ----------
@@ -499,7 +521,7 @@ function buildAttribution() {
       '- reference/：packages/ 源码里的 JSDoc 注释，AGPL-3.0，Strudel contributors。',
       '- examples/tunes.md：website/src/repl/tunes.mjs，AGPL-3.0，Strudel contributors（部分曲子注释里有作者署名）。',
       '- examples/drums/：website/src/repl/drum_patterns.mjs，数据来自 lvm/tidal-drum-patterns（GPL-3.0）。',
-      '- reference/sounds.md：strudel.b-cdn.net 上的采样清单（tidal-drum-machines、uzu-drumkit、piano、VCSL）、tidalcycles/dirt-samples 的 strudel.json、@strudel/soundfonts 的 GM 列表。',
+      '- reference/sounds.md：strudel.b-cdn.net 上的采样清单（tidal-drum-machines、uzu-drumkit、piano、VCSL）、tidalcycles/dirt-samples 的 strudel.json、@strudel/soundfonts 的 GM 列表、本项目 public/samples/ 下的映射（来源与授权见各目录 README）。',
       '',
       `生成时间：${new Date().toISOString().slice(0, 10)}`,
     ].join('\n'),
@@ -517,7 +539,7 @@ function updateSkillIndex({ pages, reference, tunes, drums, sounds }) {
   lines.push('', '### 函数参考（reference/，先读 reference/index.md 或用 search_docs 搜函数名）', '')
   for (const [f, names] of reference.namesByFile) lines.push(`- \`${f}\`（${names.length} 项）：${names.join(', ')}`)
   lines.push(
-    `- \`reference/sounds.md\` — 本项目预加载的全部音色名：${sounds.banks} 个鼓机 bank 及各自的鼓件、默认鼓组、Dirt-Samples ${sounds.dirt} 组、VCSL ${sounds.vcsl} 组、GM soundfont ${sounds.gm} 个（不确定某个音色名是否存在时查这里，heading 可用 "Drum machines" / "Dirt-Samples" / "GM soundfonts" 等）`,
+    `- \`reference/sounds.md\` — 本项目预加载的全部音色名：${sounds.banks} 个鼓机 bank 及各自的鼓件、默认鼓组、Dirt-Samples ${sounds.dirt} 组、VCSL ${sounds.vcsl} 组、中国传统乐器 ${sounds.local} 组、GM soundfont ${sounds.gm} 个（不确定某个音色名是否存在时查这里，heading 可用 "Drum machines" / "Dirt-Samples" / "Chinese traditional" / "GM soundfonts" 等）`,
   )
   lines.push('', `### 示例曲（examples/tunes.md，${tunes.length} 首，heading = 曲名）`, '')
   lines.push(tunes.map((t) => `${t.name}${t.summary ? `（${t.summary}）` : ''}`).join('；'))

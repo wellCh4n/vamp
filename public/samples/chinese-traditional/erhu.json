@@ -1,0 +1,309 @@
+{
+  "_base": "https://raw.githubusercontent.com/sfzinstruments/aliexpress-erhu/main/Samples/",
+  "erhu": {
+    "d4": [
+      "sus/erhu_d5_sus_rr1.wav",
+      "sus/erhu_d5_sus_rr2.wav"
+    ],
+    "eb4": [
+      "sus/erhu_eb5_sus_rr1.wav",
+      "sus/erhu_eb5_sus_rr2.wav"
+    ],
+    "e4": [
+      "sus/erhu_e5_sus_rr1.wav",
+      "sus/erhu_e5_sus_rr2.wav"
+    ],
+    "f4": [
+      "sus/erhu_f5_sus_rr1.wav",
+      "sus/erhu_f5_sus_rr2.wav"
+    ],
+    "gb4": [
+      "sus/erhu_gb5_sus_rr1.wav",
+      "sus/erhu_gb5_sus_rr2.wav"
+    ],
+    "g4": [
+      "sus/erhu_g5_sus_rr1.wav",
+      "sus/erhu_g5_sus_rr2.wav"
+    ],
+    "ab4": [
+      "sus/erhu_ab5_sus_rr1.wav",
+      "sus/erhu_ab5_sus_rr2.wav"
+    ],
+    "a4": [
+      "sus/erhu_a5_sus_rr1.wav",
+      "sus/erhu_a5_sus_rr2.wav"
+    ],
+    "bb4": [
+      "sus/erhu_bb5_sus_rr1.wav",
+      "sus/erhu_bb5_sus_rr2.wav"
+    ],
+    "b4": [
+      "sus/erhu_b5_sus_rr1.wav",
+      "sus/erhu_b5_sus_rr2.wav"
+    ],
+    "c5": [
+      "sus/erhu_c6_sus_rr1.wav",
+      "sus/erhu_c6_sus_rr2.wav"
+    ],
+    "db5": [
+      "sus/erhu_db6_sus_rr1.wav",
+      "sus/erhu_db6_sus_rr2.wav"
+    ],
+    "d5": [
+      "sus/erhu_d6_sus_rr1.wav",
+      "sus/erhu_d6_sus_rr2.wav"
+    ],
+    "eb5": [
+      "sus/erhu_eb6_sus_rr1.wav",
+      "sus/erhu_eb6_sus_rr2.wav"
+    ],
+    "e5": [
+      "sus/erhu_e6_sus_rr1.wav",
+      "sus/erhu_e6_sus_rr2.wav"
+    ],
+    "f5": [
+      "sus/erhu_f6_sus_rr1.wav",
+      "sus/erhu_f6_sus_rr2.wav"
+    ],
+    "gb5": [
+      "sus/erhu_gb6_sus_rr1.wav",
+      "sus/erhu_gb6_sus_rr2.wav"
+    ],
+    "g5": [
+      "sus/erhu_g6_sus_rr1.wav",
+      "sus/erhu_g6_sus_rr2.wav"
+    ],
+    "ab5": [
+      "sus/erhu_ab6_sus_rr1.wav",
+      "sus/erhu_ab6_sus_rr2.wav"
+    ],
+    "a5": [
+      "sus/erhu_a6_sus_rr1.wav",
+      "sus/erhu_a6_sus_rr2.wav"
+    ]
+  },
+  "erhu_stacc": {
+    "d4": [
+      "stac/erhu_d5_stac_rr1.wav",
+      "stac/erhu_d5_stac_rr2.wav",
+      "stac/erhu_d5_stac_rr3.wav",
+      "stac/erhu_d5_stac_rr4.wav"
+    ],
+    "eb4": [
+      "stac/erhu_eb5_stac_rr1.wav",
+      "stac/erhu_eb5_stac_rr2.wav",
+      "stac/erhu_eb5_stac_rr3.wav",
+      "stac/erhu_eb5_stac_rr4.wav"
+    ],
+    "e4": [
+      "stac/erhu_e5_stac_rr1.wav",
+      "stac/erhu_e5_stac_rr2.wav",
+      "stac/erhu_e5_stac_rr3.wav",
+      "stac/erhu_e5_stac_rr4.wav"
+    ],
+    "f4": [
+      "stac/erhu_f5_stac_rr1.wav",
+      "stac/erhu_f5_stac_rr2.wav",
+      "stac/erhu_f5_stac_rr3.wav",
+      "stac/erhu_f5_stac_rr4.wav"
+    ],
+    "gb4": [
+      "stac/erhu_gb5_stac_rr1.wav",
+      "stac/erhu_gb5_stac_rr2.wav",
+      "stac/erhu_gb5_stac_rr3.wav",
+      "stac/erhu_gb5_stac_rr4.wav"
+    ],
+    "g4": [
+      "stac/erhu_g5_stac_rr1.wav",
+      "stac/erhu_g5_stac_rr2.wav",
+      "stac/erhu_g5_stac_rr3.wav",
+      "stac/erhu_g5_stac_rr4.wav"
+    ],
+    "ab4": [
+      "stac/erhu_ab5_stac_rr1.wav",
+      "stac/erhu_ab5_stac_rr2.wav",
+      "stac/erhu_ab5_stac_rr3.wav",
+      "stac/erhu_ab5_stac_rr4.wav"
+    ],
+    "a4": [
+      "stac/erhu_a5_stac_rr1.wav",
+      "stac/erhu_a5_stac_rr2.wav",
+      "stac/erhu_a5_stac_rr3.wav",
+      "stac/erhu_a5_stac_rr4.wav"
+    ],
+    "bb4": [
+      "stac/erhu_bb5_stac_rr1.wav",
+      "stac/erhu_bb5_stac_rr2.wav",
+      "stac/erhu_bb5_stac_rr3.wav",
+      "stac/erhu_bb5_stac_rr4.wav"
+    ],
+    "b4": [
+      "stac/erhu_b5_stac_rr1.wav",
+      "stac/erhu_b5_stac_rr2.wav",
+      "stac/erhu_b5_stac_rr3.wav",
+      "stac/erhu_b5_stac_rr4.wav"
+    ],
+    "c5": [
+      "stac/erhu_c6_stac_rr1.wav",
+      "stac/erhu_c6_stac_rr2.wav",
+      "stac/erhu_c6_stac_rr3.wav",
+      "stac/erhu_c6_stac_rr4.wav"
+    ],
+    "db5": [
+      "stac/erhu_db6_stac_rr1.wav",
+      "stac/erhu_db6_stac_rr2.wav",
+      "stac/erhu_db6_stac_rr3.wav",
+      "stac/erhu_db6_stac_rr4.wav"
+    ],
+    "d5": [
+      "stac/erhu_d6_stac_rr1.wav",
+      "stac/erhu_d6_stac_rr2.wav",
+      "stac/erhu_d6_stac_rr3.wav",
+      "stac/erhu_d6_stac_rr4.wav"
+    ],
+    "eb5": [
+      "stac/erhu_eb6_stac_rr1.wav",
+      "stac/erhu_eb6_stac_rr2.wav",
+      "stac/erhu_eb6_stac_rr3.wav",
+      "stac/erhu_eb6_stac_rr4.wav"
+    ],
+    "e5": [
+      "stac/erhu_e6_stac_rr1.wav",
+      "stac/erhu_e6_stac_rr2.wav",
+      "stac/erhu_e6_stac_rr3.wav",
+      "stac/erhu_e6_stac_rr4.wav"
+    ],
+    "f5": [
+      "stac/erhu_f6_stac_rr1.wav",
+      "stac/erhu_f6_stac_rr2.wav",
+      "stac/erhu_f6_stac_rr3.wav",
+      "stac/erhu_f6_stac_rr4.wav"
+    ],
+    "gb5": [
+      "stac/erhu_gb6_stac_rr1.wav",
+      "stac/erhu_gb6_stac_rr2.wav",
+      "stac/erhu_gb6_stac_rr3.wav",
+      "stac/erhu_gb6_stac_rr4.wav"
+    ],
+    "g5": [
+      "stac/erhu_g6_stac_rr1.wav",
+      "stac/erhu_g6_stac_rr2.wav",
+      "stac/erhu_g6_stac_rr3.wav",
+      "stac/erhu_g6_stac_rr4.wav"
+    ],
+    "ab5": [
+      "stac/erhu_ab6_stac_rr1.wav",
+      "stac/erhu_ab6_stac_rr2.wav",
+      "stac/erhu_ab6_stac_rr3.wav",
+      "stac/erhu_ab6_stac_rr4.wav"
+    ],
+    "a5": [
+      "stac/erhu_a6_stac_rr1.wav",
+      "stac/erhu_a6_stac_rr2.wav",
+      "stac/erhu_a6_stac_rr3.wav",
+      "stac/erhu_a6_stac_rr4.wav"
+    ]
+  },
+  "erhu_soft": {
+    "d4": [
+      "st/erhu_d5_st_rr1.wav",
+      "st/erhu_d5_st_rr2.wav"
+    ],
+    "eb4": [
+      "st/erhu_eb5_st_rr1.wav",
+      "st/erhu_eb5_st_rr2.wav"
+    ],
+    "e4": [
+      "st/erhu_e5_st_rr1.wav",
+      "st/erhu_e5_st_rr2.wav"
+    ],
+    "f4": [
+      "st/erhu_f5_st_rr1.wav",
+      "st/erhu_f5_st_rr2.wav"
+    ],
+    "gb4": [
+      "st/erhu_gb5_st_rr1.wav",
+      "st/erhu_gb5_st_rr2.wav"
+    ],
+    "g4": [
+      "st/erhu_g5_st_rr1.wav",
+      "st/erhu_g5_st_rr2.wav"
+    ],
+    "ab4": [
+      "st/erhu_ab5_st_rr1.wav",
+      "st/erhu_ab5_st_rr2.wav"
+    ],
+    "a4": [
+      "st/erhu_a5_st_rr1.wav",
+      "st/erhu_a5_st_rr2.wav"
+    ],
+    "bb4": [
+      "st/erhu_bb5_st_rr1.wav",
+      "st/erhu_bb5_st_rr2.wav"
+    ],
+    "b4": [
+      "st/erhu_b5_st_rr1.wav",
+      "st/erhu_b5_st_rr2.wav"
+    ],
+    "c5": [
+      "st/erhu_c6_st_rr1.wav",
+      "st/erhu_c6_st_rr2.wav"
+    ],
+    "db5": [
+      "st/erhu_db6_st_rr1.wav",
+      "st/erhu_db6_st_rr2.wav"
+    ],
+    "d5": [
+      "st/erhu_d6_st_rr1.wav",
+      "st/erhu_d6_st_rr2.wav"
+    ],
+    "eb5": [
+      "st/erhu_eb6_st_rr1.wav",
+      "st/erhu_eb6_st_rr2.wav"
+    ],
+    "e5": [
+      "st/erhu_e6_st_rr1.wav",
+      "st/erhu_e6_st_rr2.wav"
+    ],
+    "f5": [
+      "st/erhu_f6_st_rr1.wav",
+      "st/erhu_f6_st_rr2.wav"
+    ],
+    "gb5": [
+      "st/erhu_gb6_st_rr1.wav",
+      "st/erhu_gb6_st_rr2.wav"
+    ],
+    "g5": [
+      "st/erhu_g6_st_rr1.wav",
+      "st/erhu_g6_st_rr2.wav"
+    ],
+    "ab5": [
+      "st/erhu_ab6_st_rr1.wav",
+      "st/erhu_ab6_st_rr2.wav"
+    ],
+    "a5": [
+      "st/erhu_a6_st_rr1.wav",
+      "st/erhu_a6_st_rr2.wav"
+    ],
+    "bb5": [
+      "st/erhu_bb6_st_rr1.wav",
+      "st/erhu_bb6_st_rr2.wav"
+    ],
+    "b5": [
+      "st/erhu_b6_st_rr1.wav",
+      "st/erhu_b6_st_rr2.wav"
+    ],
+    "c6": [
+      "st/erhu_c7_st_rr1.wav",
+      "st/erhu_c7_st_rr2.wav"
+    ],
+    "db6": [
+      "st/erhu_db7_st_rr1.wav",
+      "st/erhu_db7_st_rr2.wav"
+    ],
+    "d6": [
+      "st/erhu_d7_st_rr1.wav",
+      "st/erhu_d7_st_rr2.wav"
+    ]
+  }
+}

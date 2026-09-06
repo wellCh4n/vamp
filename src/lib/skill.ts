@@ -23,9 +23,28 @@ interface SkillFile {
 }
 
 let cache: Map<string, SkillFile> | undefined
+/** 开发模式下用来判断缓存是否过期：目录里 .md 的最新修改时间 */
+let cacheStamp = 0
+
+function latestMtime(dir: string): number {
+  let latest = 0
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name)
+    if (entry.isDirectory()) latest = Math.max(latest, latestMtime(full))
+    else if (entry.name.endsWith('.md')) latest = Math.max(latest, fs.statSync(full).mtimeMs)
+  }
+  return latest
+}
 
 function loadAll(): Map<string, SkillFile> {
-  if (cache) return cache
+  // 生产环境只读一次；开发时 npm run skill:build 或手改 SKILL.md 后不用重启 dev server
+  if (cache && process.env.NODE_ENV !== 'development') return cache
+  if (cache) {
+    const stamp = latestMtime(SKILL_DIR)
+    if (stamp === cacheStamp) return cache
+    looseIndex = undefined
+  }
+  cacheStamp = latestMtime(SKILL_DIR)
   const files = new Map<string, SkillFile>()
   const walk = (dir: string) => {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
