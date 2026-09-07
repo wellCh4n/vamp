@@ -1,6 +1,6 @@
 ---
 name: sound-design
-description: Make the sounds themselves expressive rather than "MIDI-like": couple dynamics to timbre, give every note an attack transient, and choose between synth and sampled sources by what each can actually do. This file holds the non-negotiables; the measurements and recipes are in dynamics-and-transients.md, read with read_doc("sound-design/<file>").
+description: Make the sounds themselves expressive rather than "MIDI-like": couple dynamics to timbre, give every note an attack transient, and build a voice's overtones with wavetables, additive synthesis or FM instead of reaching for a gm_* soundfont. This file holds the non-negotiables; the measurements, recipes and preset library are in the same directory, read with read_doc("sound-design/<file>").
 ---
 
 # Sound design skill
@@ -33,21 +33,32 @@ mean when they call a track "MIDI-like". Both are cheap to add in Strudel.
 
 3. **Pick the source by what it can do.** Filters can only remove overtones, never add ones the
    source lacks. `gm_*` soundfonts are spectrally poor and have no velocity layers, so rules 1
-   and 2 barely move them (about 1.5x). Use a synth (`sawtooth` / `square` / `supersaw`) for any
-   voice that has to be expressive — bass, lead, pad — and keep samples for what they are good
-   at: drums, plucked and struck sounds, and non-harmonic instruments such as gongs and cymbals,
-   whose overtones are not integer multiples and cannot be synthesized this way.
+   and 2 barely move them (about 1.3x). **Default to a wavetable (`s("wt_flute")`, 65 families,
+   loaded at startup) for any voice that has to be expressive** — they carry instrument character
+   yet respond to a filter envelope as fully as an oscillator (7.1x on `wt_flute` against 1.3x on
+   `gm_flute`); add `postgain(2.6)`, since they render about 3x quiet. Plain oscillators,
+   `partials` and FM are the other synth sources. Keep samples for what they are good at: drums,
+   plucked and struck sounds, and non-harmonic instruments such as gongs and cymbals, whose
+   overtones are not integer multiples and cannot be synthesized this way.
 
-4. **Do not apply this to drum samples.** They already carry their own transient.
+4. **Set `lpf` below the source's own harmonics.** A filter envelope can only sweep through content
+   that exists. A base above it leaves nothing to reveal and the transient vanishes — the single
+   most common way these rules fail.
+
+5. **Do not apply this to drum samples.** They already carry their own transient.
 
 ## When to read the details
 
 | Situation | Read |
 |---|---|
-| Writing any synth voice, or the user says it sounds fake / flat / like MIDI / lifeless | `read_doc("sound-design/dynamics-and-transients.md")`: the measurements, per-instrument parameter table, sample-source workarounds, common mistakes |
+| Writing any synth voice, or the user says it sounds fake / flat / like MIDI / lifeless | `read_doc("sound-design/dynamics-and-transients.md")`: the measurements, per-role parameter table, sample-source workarounds, common mistakes |
+| Choosing a sound for a voice, or the user wants a specific instrument, a bell, metal, an organ, an e-piano | `read_doc("sound-design/synth-voices.md")`: the wavetable list, how `partials` / FM / `chebyshev` behave with measured spectra, and a preset library to paste from |
 
 ## File index
 
 - `sound-design/dynamics-and-transients.md` — why overtones make a sound real, the two recipes with
   measured spectral centroids, a starting-parameter table per instrument role, what to do when the
   source is a sample, and the mistakes that flatten a track
+- `sound-design/synth-voices.md` — building a voice's overtones: the 65 AKWF wavetable families,
+  exact additive control with `partials`, harmonic and inharmonic FM, `chebyshev` waveshaping and
+  where it sits in the signal chain, plus 13 measured drop-in presets

@@ -422,6 +422,7 @@ const SAMPLE_SOURCES = [
   ['piano.json', `${CDN}/piano.json`],
   ['vcsl.json', `${CDN}/vcsl.json`],
   ['dirt-samples.json', 'https://raw.githubusercontent.com/tidalcycles/dirt-samples/main/strudel.json'],
+  ['wavetables.json', 'https://raw.githubusercontent.com/Bubobubobubobubo/Dough-Waveforms/main/strudel.json'],
 ]
 /** Maps shipped with this project (public/samples/<dir>/*.json), read straight off disk; a directory may hold several */
 const LOCAL_SAMPLE_MAPS = [
@@ -496,6 +497,14 @@ async function buildSounds() {
   lines.push('', '## Piano', '', fmtList(sampleEntries(data['piano.json'])), '', '`note("c e g").s("piano")` or `.piano()`.')
   lines.push('', '## Dirt-Samples (the classic Tidal sample pack; the number in parentheses is how many samples share the name, picked with `n`)', '', fmtList(sampleEntries(data['dirt-samples.json'])))
   lines.push('', '## VCSL (Versilian instrument samples, mostly percussion and folk instruments)', '', fmtList(sampleEntries(data['vcsl.json'])))
+  lines.push(
+    '',
+    '## Wavetables (AKWF single-cycle waveforms)',
+    '',
+    'Use `s("wt_flute")`, and `n` to pick one of the waveforms in that family. A wavetable drives the synth engine rather than the sampler, so filter envelopes and velocity coupling shape it as strongly as an oscillator — unlike a soundfont. Prefer these over `gm_*` for any voice that has to be expressive.',
+    '',
+    fmtList(sampleEntries(data['wavetables.json'])),
+  )
   for (const [dir, desc, map] of local) {
     lines.push('', '## Chinese traditional', '', `Shipped with this project (public/samples/${dir}). ${desc}`, '', fmtList(sampleEntries(map)))
   }
@@ -505,6 +514,7 @@ async function buildSounds() {
     banks: banks.size,
     dirt: sampleEntries(data['dirt-samples.json']).length,
     vcsl: sampleEntries(data['vcsl.json']).length,
+    wavetables: sampleEntries(data['wavetables.json']).length,
     local: local.reduce((n, [, , map]) => n + sampleEntries(map).length, 0),
     gm: gm.length,
   }
@@ -542,7 +552,7 @@ function updateSkillIndex({ pages, reference, tunes, drums, sounds }) {
   lines.push('', '### Function reference (reference/; start with reference/index.md, or search a function name with search_docs)', '')
   for (const [f, names] of reference.namesByFile) lines.push(`- \`${f}\` (${names.length} entries): ${names.join(', ')}`)
   lines.push(
-    `- \`reference/sounds.md\` — every sound name this project preloads: ${sounds.banks} drum-machine banks with their drums, the default kit, ${sounds.dirt} Dirt-Samples groups, ${sounds.vcsl} VCSL groups, ${sounds.local} traditional Chinese groups and ${sounds.gm} GM soundfonts (check here whenever you are unsure a sound name exists; useful headings are "Drum machines" / "Dirt-Samples" / "Chinese traditional" / "GM soundfonts")`,
+    `- \`reference/sounds.md\` — every sound name this project preloads: ${sounds.banks} drum-machine banks with their drums, the default kit, ${sounds.dirt} Dirt-Samples groups, ${sounds.vcsl} VCSL groups, ${sounds.wavetables} AKWF wavetable families, ${sounds.local} traditional Chinese groups and ${sounds.gm} GM soundfonts (check here whenever you are unsure a sound name exists; useful headings are "Drum machines" / "Dirt-Samples" / "Chinese traditional" / "GM soundfonts")`,
   )
   lines.push('', `### Example tunes (examples/tunes.md, ${tunes.length} of them, heading = tune name)`, '')
   lines.push(tunes.map((t) => `${t.name}${t.summary ? ` (${t.summary})` : ''}`).join('; '))

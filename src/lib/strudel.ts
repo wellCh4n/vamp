@@ -153,6 +153,11 @@ async function loadDefaultSamples() {
     samples('github:tidalcycles/dirt-samples'),
     // Traditional Chinese instruments: Beijing opera percussion, shipped as mp3 with the project
     samples('/samples/chinese-traditional/strudel.json', undefined, { prebake: true }),
+    // AKWF single-cycle wavetables (wt_*). Only the manifest is fetched here; a waveform file is
+    // downloaded on first trigger. Unlike a soundfont these drive the synth engine, so a filter
+    // envelope shapes them as strongly as an oscillator (measured 7.1x attack/sustain centroid on
+    // wt_flute, against 1.3x on gm_flute).
+    samples('github:Bubobubobubobubo/Dough-Waveforms'),
   ])
   // Make shorthands like bank("tr909") work too
   await aliasBank(`${CDN}/tidal-drum-machines-alias.json`)

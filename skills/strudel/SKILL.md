@@ -197,7 +197,7 @@ note("[c eb g <f bb>](3,8,<0 1>)".sub(12))
 - `reference/tonal.md` (7 entries): transpose, scaleTranspose, scale, addVoicings, voicings, rootNotes, voicing
 - `reference/samples.md` (6 entries): getDur, samples, setMaxPolyphony, setGainCurve, aliasBank, soundAlias
 - `reference/draw.md` (8 entries): drawLine, pianoroll, wordfall, pitchwheel, spiral, fscope, scope, spectrum
-- `reference/sounds.md` — every sound name this project preloads: 71 drum-machine banks with their drums, the default kit, 218 Dirt-Samples groups, 128 VCSL groups, 4 traditional Chinese groups and 125 GM soundfonts (check here whenever you are unsure a sound name exists; useful headings are "Drum machines" / "Dirt-Samples" / "Chinese traditional" / "GM soundfonts")
+- `reference/sounds.md` — every sound name this project preloads: 71 drum-machine banks with their drums, the default kit, 218 Dirt-Samples groups, 128 VCSL groups, 65 AKWF wavetable families, 4 traditional Chinese groups and 125 GM soundfonts (check here whenever you are unsure a sound name exists; useful headings are "Drum machines" / "Dirt-Samples" / "Chinese traditional" / "GM soundfonts")
 
 ### Example tunes (examples/tunes.md, 32 of them, heading = tune name)
 
