@@ -1,25 +1,25 @@
-# 中国传统乐器采样（chinese-traditional）
+# Traditional Chinese instrument samples (chinese-traditional)
 
-`strudel.json` 是 Strudel 采样映射，由 `src/lib/strudel.ts` 在启动时加载，`_base` 指向本目录，mp3 随项目发布。
+`strudel.json` is a Strudel sample map loaded by `src/lib/strudel.ts` at startup. Its `_base` points at this directory, and the mp3s ship with the project.
 
-如果以后要加指向外部 URL 的映射，另开一份 json：superdough 的 `_base` 是整份映射共用的，本地路径和远程 URL 不能混。
+To add mappings that point at external URLs later, start a separate json file: superdough's `_base` is shared by the whole map, so local paths and remote URLs cannot be mixed.
 
-## 京剧锣鼓 `bangu` / `xiaoluo` / `daluo` / `naobo`
+## Beijing opera percussion `bangu` / `xiaoluo` / `daluo` / `naobo`
 
-- 来源：Freesound pack [QMUL-BeijingOperaPercussion](https://freesound.org/people/ajaysm/packs/14056/)，上传者 ajaysm，CC BY 4.0。
-  演奏 Ying Wan（London Jing Kun Opera Association），录音 Mi Tian，Centre for Digital Music, Queen Mary University of London，2013 年 9 月，AKG C414。
-  数据集说明：http://compmusic.upf.edu/bo-perc-dataset 。作者要求在研究中使用时引用：
+- Source: the Freesound pack [QMUL-BeijingOperaPercussion](https://freesound.org/people/ajaysm/packs/14056/), uploaded by ajaysm, CC BY 4.0.
+  Performed by Ying Wan (London Jing Kun Opera Association), recorded by Mi Tian at the Centre for Digital Music, Queen Mary University of London, September 2013, with an AKG C414.
+  Dataset description: http://compmusic.upf.edu/bo-perc-dataset. The authors ask that research use cite:
   Mi Tian, Ajay Srinivasamurthy, Mark Sandler and Xavier Serra, *A Study of Instrument-wise Onset Detection in Beijing Opera Percussion Ensembles*, Proc. IEEE ICASSP 2014.
-- 四件乐器的单击采样：板鼓 `bangu`（59 个）、小锣 `xiaoluo`（65 个）、大锣 `daluo`（50 个）、铙钹 `naobo`（62 个），用 `n` 选第几个，顺序同来源编号。
-- 处理：32-bit float 单声道 wav 转 mp3（libmp3lame VBR q3），裁掉起始静音（保留 2 ms），峰值归一到 -1 dBFS（来源里有很多极弱的击打，归一后力度差异变小，靠 `gain` 自己做强弱）。
+- Single-stroke samples of four instruments: bangu drum `bangu` (59), small gong `xiaoluo` (65), large gong `daluo` (50) and cymbals `naobo` (62). Pick one with `n`; the order follows the source numbering.
+- Processing: 32-bit float mono wav converted to mp3 (libmp3lame VBR q3), leading silence trimmed (2 ms kept), peak normalized to -1 dBFS (the source has many very quiet strokes, so normalizing flattens the dynamics — shape them yourself with `gain`).
 
 ```js
 s("bangu*8").n("<0 5 12 20>*8").gain(".9 .5")
 s("~ xiaoluo ~ daluo, naobo(3,8)").n(irand(40))
 ```
 
-## 已有的近似音色（无需额外加载）
+## Close-enough sounds already available (no extra loading)
 
-- 古筝：VCSL 的 `dantranh`（越南筝，同族）、`dantranh_tremolo`、`dantranh_vibrato`；GM `gm_koto`。
-- 锣鼓：VCSL `gong`、`gong2`、`woodblock`；GM `gm_taiko_drum`、`gm_woodblock`。
-- 扬琴 `gm_dulcimer`、唢呐 `gm_shanai`、箫 `gm_shakuhachi`、笛 `gm_pan_flute`。
+- Guzheng: VCSL's `dantranh` (the Vietnamese zither, same family), `dantranh_tremolo`, `dantranh_vibrato`; GM `gm_koto`.
+- Gongs and drums: VCSL `gong`, `gong2`, `woodblock`; GM `gm_taiko_drum`, `gm_woodblock`.
+- Yangqin `gm_dulcimer`, suona `gm_shanai`, xiao `gm_shakuhachi`, dizi `gm_pan_flute`.

@@ -2,12 +2,13 @@ import { relations, sql } from 'drizzle-orm'
 import { bigserial, index, integer, jsonb, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
 /**
- * 工程 > 会话 > 消息。
+ * Project > session > message.
  *
- * - projects：一个工程就是一首音乐，code 是当前代码。
- * - sessions：对同一个工程的多次对话，每个会话有独立的 Agent 历史。
- * - messages：pi AgentMessage 原样存 jsonb，按 seq 排序。
- * - project_versions：每次代码变更（Agent 的 set_code 或手动编辑）的快照，可回溯。
+ * - projects: one project is one piece of music; `code` is its current code.
+ * - sessions: separate conversations about the same project, each with its own agent history.
+ * - messages: pi AgentMessage stored verbatim as jsonb, ordered by seq.
+ * - project_versions: a snapshot of every code change (the agent's set_code or a manual edit), so
+ *   history can be walked back.
  */
 
 const timestamps = {
@@ -43,7 +44,7 @@ export const messages = pgTable(
       .notNull()
       .references(() => sessions.id, { onDelete: 'cascade' }),
     seq: integer('seq').notNull(),
-    /** pi-agent-core 的 AgentMessage（user / assistant / toolResult） */
+    /** pi-agent-core's AgentMessage (user / assistant / toolResult) */
     message: jsonb('message').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
@@ -59,7 +60,7 @@ export const projectVersions = pgTable(
       .references(() => projects.id, { onDelete: 'cascade' }),
     sessionId: uuid('session_id').references(() => sessions.id, { onDelete: 'set null' }),
     code: text('code').notNull(),
-    /** 这次改动的说明：Agent 的 summary 或 "手动编辑" */
+    /** What this change was: the agent's summary, or the label for a manual edit */
     summary: text('summary').notNull().default(''),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },

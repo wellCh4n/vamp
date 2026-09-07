@@ -1,7 +1,7 @@
 import { config } from 'dotenv'
 import { defineConfig } from 'drizzle-kit'
 
-// drizzle-kit 不会自动读 .env.local
+// drizzle-kit does not read .env.local on its own
 config({ path: '.env.local' })
 config()
 

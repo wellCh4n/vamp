@@ -1,4 +1,4 @@
-// @strudel/* 包没有自带类型，这里只声明我们用到的部分。
+// The @strudel/* packages ship no types; only the parts we use are declared here.
 
 declare module '@strudel/core' {
   export interface Hap {
@@ -8,7 +8,7 @@ declare module '@strudel/core' {
     duration: number
     isActive(time: number): boolean
     hasOnset(): boolean
-    /** 把非对象 value 包成 { note } / { s } 之类的对象 */
+    /** Wrap a non-object value into an object such as { note } or { s } */
     ensureObjectValue(): void
   }
 
@@ -90,9 +90,9 @@ declare module '@strudel/webaudio' {
   export function initAudio(options?: Record<string, unknown>): Promise<void>
   export function setAudioContext(ctx: BaseAudioContext | null): void
   export function setSuperdoughAudioController(controller: unknown): void
-  /** 清掉按 orbit 缓存的全局效果和分析器（切换 AudioContext 后必须调用） */
+  /** Clear the per-orbit cache of global effects and analysers (required after switching AudioContext) */
   export function resetGlobalEffects(): void
-  /** 触发一个事件：value 是控制参数对象，t 是相对 AudioContext 的秒数 */
+  /** Trigger one event: value is the control-parameter object, t is seconds on the AudioContext clock */
   export function superdough(value: Record<string, unknown>, t: number, hapDuration: number, cps?: number, cycle?: number): Promise<void>
   export function initAudioOnFirstClick(options?: Record<string, unknown>): Promise<void>
   export function registerSynthSounds(): Promise<void>
@@ -102,7 +102,7 @@ declare module '@strudel/webaudio' {
     options?: { prebake?: boolean; tag?: string },
   ): Promise<void>
   export function aliasBank(...args: unknown[]): Promise<void>
-  /** superdough 的分析器表，按 id 索引 */
+  /** superdough's analyser table, indexed by id */
   export const analysers: Record<string | number, AnalyserNode | undefined>
   export interface ScopeOptions {
     ctx: CanvasRenderingContext2D

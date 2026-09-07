@@ -21,18 +21,20 @@ import { flash, highlightMiniLocations, updateMiniLocations } from '@strudel/cod
 import type { EditorView } from '@codemirror/view'
 
 /**
- * Strudel 引擎封装（对应官方 REPL 的 StrudelMirror，但不接管主题 / DOM）。
+ * Wrapper around the Strudel engine (the counterpart of the official REPL's StrudelMirror, but it
+ * does not take over the theme or the DOM).
  *
- * - 只初始化一次（React StrictMode 下 effect 会跑两次）。
- * - 默认加载和官方 REPL 一样的音色：鼓机、钢琴、VCSL 乐器、Dirt-Samples 杂项、GM soundfonts，
- *   外加本项目自带的京剧锣鼓采样（public/samples/chinese-traditional）。
- * - 通过 attachEditor() 挂上 CodeMirror 视图后，会把 mini-notation 位置和
- *   当前播放的事件高亮同步到编辑器里。
- * - 监听 Strudel 的日志事件，把"触发时"的错误（例如音色不存在）也暴露出来。
+ * - Initializes exactly once (effects run twice under React StrictMode).
+ * - Loads the same default sounds as the official REPL: drum machines, piano, VCSL instruments,
+ *   Dirt-Samples miscellany and GM soundfonts, plus this project's own Beijing opera percussion
+ *   samples (public/samples/chinese-traditional).
+ * - Once a CodeMirror view is attached with attachEditor(), mini-notation positions and the events
+ *   currently playing are highlighted in the editor.
+ * - Listens to Strudel's log events so trigger-time errors (a missing sound, say) surface too.
  */
 
 const CDN = 'https://strudel.b-cdn.net'
-/** Strudel core 的 logger 会往 document 上派发这个事件 */
+/** Strudel core's logger dispatches this event on document */
 const STRUDEL_LOG_EVENT = 'strudel.log'
 
 export type EngineStatus = 'idle' | 'loading' | 'ready' | 'error'
@@ -40,14 +42,14 @@ export type EngineStatus = 'idle' | 'loading' | 'ready' | 'error'
 export interface EngineState {
   status: EngineStatus
   started: boolean
-  /** 暂停中：位置保留，再按播放从原处继续；stop 才回到开头 */
+  /** Paused: the position is kept and playing again resumes in place; only stop rewinds to the start */
   paused: boolean
   error?: string
 }
 
 type Listener = (state: EngineState) => void
 
-/** 播放进度：当前 cycle 位置（小数部分就是 cycle 内的进度）、速度、本次播放开始的时间戳 */
+/** Playback progress: the current cycle position (the fraction is the progress within the cycle), the tempo, and the timestamp this playback started */
 export interface Transport {
   cycle: number
   cps: number
@@ -64,14 +66,14 @@ let audioReady: Promise<void> | undefined
 let editorView: EditorView | null = null
 let canvas: HTMLCanvasElement | null = null
 let miniLocations: [number, number][] = []
-/** 当前播放属于哪个工程（播放是工程级别的，切到别的工程要停） */
+/** Which project the current playback belongs to (playback is per project and stops when switching) */
 let playingOwner: string | null = null
 
-/** 可视化窗口：播放头在最左，向前看 4 个 cycle（和官方文档的 punchcard 一致） */
+/** Visualization window: the playhead sits at the far left, looking 4 cycles ahead (matching the punchcard in the official docs) */
 const DRAW_TIME: [number, number] = [0, 4]
-/** 未激活音符的填充色（浅灰 + 黑字，深浅色主题都能读） */
+/** Fill color for inactive notes (light gray with black text, readable in both themes) */
 const ROLL_INACTIVE = '#cbd5e1'
-/** 所有 pattern 的输出都接到这个分析器上，波形 / 频谱从这里取数据 */
+/** Every pattern's output feeds this analyser, which drives the scope and spectrum views */
 const ANALYSER_ID = 1
 
 export type Visualization = 'roll' | 'scope' | 'spectrum'
@@ -79,7 +81,7 @@ let visualization: Visualization = 'roll'
 let state: EngineState = { status: 'idle', started: false, paused: false }
 const listeners = new Set<Listener>()
 
-/** 触发时错误（播放过程中由 scheduler 报出来的），按时间记录 */
+/** Trigger-time errors (raised by the scheduler during playback), recorded with timestamps */
 interface RuntimeError {
   message: string
   at: number
@@ -104,7 +106,7 @@ export function getState() {
   return state
 }
 
-/** 订阅播放进度（每帧一次，播放时才会触发）。返回取消函数。 */
+/** Subscribe to playback progress (once per frame, only while playing). Returns an unsubscribe function. */
 export function subscribeTransport(listener: TransportListener) {
   transportListeners.add(listener)
   return () => {
@@ -118,7 +120,7 @@ function installLogListener() {
   document.addEventListener(STRUDEL_LOG_EVENT, (event) => {
     const detail = (event as CustomEvent<{ message?: string; type?: string }>).detail
     const message = detail?.message ?? ''
-    // 求值错误已经由 onEvalError 处理；这里只关心播放过程中的错误，例如 "[getTrigger] error: sound xxx not found!"
+    // Evaluation errors are handled by onEvalError; this only cares about errors during playback, e.g. "[getTrigger] error: sound xxx not found!"
     if (!message.includes('] error:') || message.startsWith('[eval]')) return
     const clean = message.replace(/^\[[^\]]*\]\s*error:\s*/, '')
     runtimeErrors.push({ message: clean, at: performance.now() })
@@ -127,12 +129,12 @@ function installLogListener() {
   })
 }
 
-/** 取 since 之后出现的触发时错误（去重） */
+/** Trigger-time errors raised after `since`, deduplicated */
 export function getRuntimeErrors(since: number): string[] {
   return [...new Set(runtimeErrors.filter((e) => e.at >= since).map((e) => e.message))]
 }
 
-/** 等一小段时间，看播放过程中有没有冒出错误（音色不存在等只在触发时才会报） */
+/** Wait briefly to see whether playback raises an error (a missing sound and the like only report at trigger time) */
 export async function waitForRuntimeErrors(since: number, ms = 1500): Promise<string[]> {
   await new Promise((resolve) => setTimeout(resolve, ms))
   return getRuntimeErrors(since)
@@ -147,22 +149,22 @@ async function loadDefaultSamples() {
     samples(`${CDN}/piano.json`, `${CDN}/piano/`, { prebake: true }),
     samples(`${CDN}/vcsl.json`, `${CDN}/VCSL/`, { prebake: true }),
     samples(`${CDN}/uzu-drumkit.json`, `${CDN}/uzu-drumkit/`, { prebake: true, tag: 'drum-machines' }),
-    // workshop 里用到的 casio / jazz / metal / insect / wind / east / space / numbers 等
+    // casio / jazz / metal / insect / wind / east / space / numbers and friends, used in the workshop
     samples('github:tidalcycles/dirt-samples'),
-    // 中国传统乐器：京剧锣鼓，mp3 随项目发布
+    // Traditional Chinese instruments: Beijing opera percussion, shipped as mp3 with the project
     samples('/samples/chinese-traditional/strudel.json', undefined, { prebake: true }),
   ])
-  // 让 bank("tr909") 这种简写也能用
+  // Make shorthands like bank("tr909") work too
   await aliasBank(`${CDN}/tidal-drum-machines-alias.json`)
 }
 
-/** GM 音色（gm_piano、gm_synth_bass_1 …）来自 soundfonts，按需从 CDN 加载 */
+/** GM sounds (gm_piano, gm_synth_bass_1, …) come from soundfonts, loaded from the CDN on demand */
 async function loadSoundfonts() {
   const { registerSoundfonts } = await import('@strudel/soundfonts')
   registerSoundfonts()
 }
 
-/** 把 Strudel 的函数注册到全局作用域，并加载合成器和音色。只跑一次。 */
+/** Register Strudel's functions in the global scope and load synths and sounds. Runs once. */
 function prebake() {
   if (prebaked) return prebaked
   installLogListener()
@@ -190,7 +192,7 @@ function prebake() {
 function getRepl(): Repl {
   if (replInstance) return replInstance
 
-  // Drawer 每帧从 scheduler 查询可见事件：高亮编辑器里对应的 mini-notation，并画 pianoroll
+  // Each frame the drawer queries the scheduler for visible events: it highlights the matching mini-notation in the editor and draws the pianoroll
   drawer = new Drawer((haps: Hap[], time: number) => {
     if (editorView) {
       highlightMiniLocations(
@@ -210,7 +212,7 @@ function getRepl(): Repl {
     defaultOutput: webaudioOutput,
     getTime: getAudioContextCurrentTime,
     transpiler,
-    // 给没有自己指定分析器的事件挂上默认分析器，波形 / 频谱才有数据
+    // Attach the default analyser to events that do not name one, so the scope and spectrum have data
     editPattern: (pattern) => withAnalyser(pattern),
     beforeEval: async () => {
       await prebake()
@@ -246,7 +248,7 @@ function withAnalyser(pattern: Pattern): Pattern {
   })
 }
 
-/** 切换编辑器下方的可视化：音符（pianoroll）、波形（示波器）、频谱 */
+/** Switch the visualization below the editor: notes (pianoroll), waveform (scope) or spectrum */
 export function setVisualization(mode: Visualization) {
   visualization = mode
   if (!state.started) clearRoll()
@@ -260,7 +262,7 @@ function drawVisualization(haps: Hap[], time: number) {
   if (!canvas || canvas.width === 0) return
   const ctx = canvas.getContext('2d')
   if (!ctx) return
-  // canvas 继承页面的前景色
+  // The canvas inherits the page's foreground color
   const foreground = getComputedStyle(canvas).color || '#888'
   const dpr = window.devicePixelRatio || 1
   if (visualization === 'scope') {
@@ -297,14 +299,14 @@ function clearRoll() {
   if (canvas && ctx) ctx.clearRect(0, 0, canvas.width, canvas.height)
 }
 
-/** 挂上 pianoroll 用的 canvas（传 null 取消）。尺寸由调用方按 devicePixelRatio 设置。 */
+/** Attach the canvas used by the pianoroll (pass null to detach). The caller sizes it by devicePixelRatio. */
 export function attachCanvas(el: HTMLCanvasElement | null) {
   canvas = el
   if (!el) return
   if (!state.started) clearRoll()
 }
 
-/** 把 CodeMirror 视图挂到引擎上（传 null 取消）。 */
+/** Attach a CodeMirror view to the engine (pass null to detach). */
 export function attachEditor(view: EditorView | null) {
   editorView = view
   if (view && miniLocations.length && state.started) {
@@ -312,24 +314,25 @@ export function attachEditor(view: EditorView | null) {
   }
 }
 
-/** 预热：提前加载模块和采样，这样第一次点播放时不用等太久。 */
+/** Warm up: load modules and samples ahead of time so the first play does not stall. */
 export function warmup() {
   return prebake().catch(() => undefined)
 }
 
-/** 当前正在播放的工程 id（没在播放时为 null） */
+/** Id of the project currently playing (null when nothing is playing) */
 export function getPlayingOwner() {
   return state.started ? playingOwner : null
 }
 
 /**
- * 执行一段 Strudel 代码并播放。返回 true 表示求值没有报错。必须在用户手势之后调用。
- * @param owner 发起播放的工程 id，用于切换工程时自动停止
+ * Evaluate a piece of Strudel code and play it. Returns true when evaluation raised no error. Must
+ * be called from a user gesture.
+ * @param owner id of the project that started playback, used to stop automatically when switching projects
  */
 export async function play(code: string, owner: string | null = null): Promise<boolean> {
   playingOwner = owner
   emit({ paused: false })
-  // AudioContext 只能在用户手势里恢复；这里正好在点击 / 快捷键的调用链中
+  // An AudioContext can only be resumed from a user gesture, and this sits in the click / shortcut call chain
   audioReady ??= initAudio().catch((err: Error) => {
     audioReady = undefined
     throw err
@@ -343,27 +346,30 @@ export async function play(code: string, owner: string | null = null): Promise<b
 
 export interface ExportOptions {
   code: string
-  /** 起始 cycle */
+  /** First cycle to render */
   begin: number
-  /** 导出多少个 cycle */
+  /** How many cycles to export */
   cycles: number
   sampleRate: number
-  /** 文件名（不含扩展名） */
+  /** File name (without the extension) */
   name: string
 }
 
 export interface ExportResult {
-  /** 渲染过程中的触发时错误（例如音色不存在），不影响文件生成 */
+  /** Trigger-time errors during rendering (a missing sound, say); they do not prevent the file from being written */
   warnings: string[]
   seconds: number
 }
 
 /**
- * 离线渲染并下载 WAV。思路和官方 REPL 的 renderPatternAudio 一样：把全局 AudioContext 换成
- * OfflineAudioContext，按时间顺序把区间内的事件交给 superdough 触发，渲染完编码成 WAV。
- * 不直接用 @strudel/webaudio 1.3.0 的 renderPatternAudio：它内部 new 的音频控制器带着一份
- * 私有的 AudioContext，导致 reverb / delay 发送时报 "different audio context"，导出的文件没有混响。
- * 这里只用 superdough 自己的 setAudioContext / 控制器懒创建，全程在同一个上下文里。
+ * Render offline and download a WAV. The approach matches the official REPL's renderPatternAudio:
+ * swap the global AudioContext for an OfflineAudioContext, hand the events in the range to
+ * superdough in time order, then encode the result as WAV.
+ * @strudel/webaudio 1.3.0's renderPatternAudio is not used directly: the audio controller it news up
+ * carries its own private AudioContext, so reverb / delay sends fail with "different audio context"
+ * and the exported file has no reverb.
+ * This uses only superdough's own setAudioContext and lazy controller creation, staying in one
+ * context throughout.
  */
 export async function exportAudio({ code, begin, cycles, sampleRate, name }: ExportOptions): Promise<ExportResult> {
   await prebake()
@@ -376,7 +382,7 @@ export async function exportAudio({ code, begin, cycles, sampleRate, name }: Exp
   const seconds = cycles / cps
   const since = performance.now()
 
-  // 已经排进实时上下文的事件让它们播完再关，否则会有一串 "context is closed" 警告
+  // Let events already scheduled on the live context finish before closing it, or a stream of "context is closed" warnings follows
   await new Promise((resolve) => setTimeout(resolve, 200))
   const live = getAudioContext()
   await live.close()
@@ -386,7 +392,7 @@ export async function exportAudio({ code, begin, cycles, sampleRate, name }: Exp
   resetGlobalEffects()
   try {
     await initAudio({ multiChannelOrbits: false })
-    // 按 onset 顺序触发很重要：cut 之类的控制依赖音频图的当前状态
+    // Triggering in onset order matters: controls like cut depend on the current state of the audio graph
     const haps = pattern
       .queryArc(begin, end, { _cps: cps })
       .filter((hap) => hap.hasOnset() && hap.whole)
@@ -403,7 +409,7 @@ export async function exportAudio({ code, begin, cycles, sampleRate, name }: Exp
     const rendered = await offline.startRendering()
     downloadWav(rendered, `${name}.wav`)
   } finally {
-    // 恢复实时上下文：superdough 下次 getAudioContext() 会新建，控制器和全局效果都要重来
+    // Restore the live context: superdough's next getAudioContext() creates a new one, so the controller and global effects start over
     setAudioContext(null)
     setSuperdoughAudioController(null)
     resetGlobalEffects()
@@ -416,7 +422,7 @@ export async function exportAudio({ code, begin, cycles, sampleRate, name }: Exp
   return { warnings: getRuntimeErrors(since), seconds }
 }
 
-/** AudioBuffer → 16-bit PCM WAV，触发浏览器下载 */
+/** AudioBuffer -> 16-bit PCM WAV, then trigger a browser download */
 function downloadWav(buffer: AudioBuffer, fileName: string) {
   const channels = buffer.numberOfChannels
   const frames = buffer.length
@@ -464,14 +470,14 @@ export function stop() {
   emit({ started: false, paused: false })
 }
 
-/** 暂停：时钟停在当前位置，编辑器高亮和可视化清空 */
+/** Pause: the clock stops in place, and editor highlights and visualizations are cleared */
 export function pause() {
   if (!replInstance?.scheduler.started) return
   replInstance.scheduler.pause()
   emit({ started: false, paused: true })
 }
 
-/** 从暂停处继续（代码没改的情况下；改了应该走 play 重新求值） */
+/** Resume from a pause (only when the code is unchanged; otherwise go through play to re-evaluate) */
 export async function resume() {
   if (!replInstance || !state.paused) return
   await audioReady

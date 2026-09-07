@@ -13,14 +13,17 @@ import {
 } from '@/lib/agent-model'
 
 /**
- * 浏览器端的 pi Agent。
+ * The browser-side pi agent.
  *
- * - LLM 调用通过 streamProxy 走 /api/stream（服务端持 Key、拼系统提示）。
- * - set_code 工具在浏览器执行：写入编辑器并播放，失败时 throw，pi 会把错误作为
- *   tool result 交回模型，模型自行修正。
- * - read_doc / search_docs 工具读 skills/ 下各 skill 的资料（服务端 /api/skill/*），
- *   让模型按需查语法、函数参考、示例曲和鼓型，而不是把整个资料库塞进系统提示。
- * - beforeToolCall 分别限制每次用户输入最多调几次 set_code / 查几次资料，避免无限循环。
+ * - LLM calls go through streamProxy to /api/stream (the server holds the key and assembles the
+ *   system prompt).
+ * - The set_code tool runs in the browser: it writes to the editor and plays. On failure it throws,
+ *   and pi hands the error back to the model as a tool result so the model can fix itself.
+ * - The read_doc / search_docs tools read the docs of each skill under skills/ (via the server's
+ *   /api/skill/*), letting the model look up syntax, the function reference, example tunes and drum
+ *   patterns on demand instead of stuffing the whole library into the system prompt.
+ * - beforeToolCall caps how many set_code calls and doc lookups a single user message may trigger,
+ *   so it cannot loop forever.
  */
 
 export interface ApplyResult {
@@ -35,7 +38,7 @@ export interface AgentHost {
 const MAX_TRANSIENT_RETRIES = 2
 const RETRY_DELAYS_MS = [2000, 5000]
 
-/** 服务端过载、限流、网关超时这类错误值得自动重试 */
+/** Upstream overload, rate limiting and gateway timeouts are worth retrying automatically */
 export function isTransientError(message?: string) {
   if (!message) return false
   return /overloaded|rate.?limit|too many requests|\b(429|500|502|503|504)\b|timeout|ECONNRESET|socket hang up/i.test(message)
@@ -91,7 +94,7 @@ async function fetchSkill<T>(url: string): Promise<T> {
   return data
 }
 
-/** 读 Strudel 资料（文件或文件里的一个标题段落） */
+/** Read Strudel docs (a whole file, or one heading section of it) */
 export function createReadDocTool(): AgentTool<typeof ReadDocParams, { path: string; heading?: string }> {
   return {
     name: READ_DOC_TOOL,
@@ -113,7 +116,7 @@ export function createReadDocTool(): AgentTool<typeof ReadDocParams, { path: str
   }
 }
 
-/** 全文搜索 Strudel 资料 */
+/** Full-text search over the Strudel docs */
 export function createSearchDocsTool(): AgentTool<typeof SearchDocsParams, { query: string; count: number }> {
   return {
     name: SEARCH_DOCS_TOOL,
@@ -136,9 +139,9 @@ export function createSearchDocsTool(): AgentTool<typeof SearchDocsParams, { que
 
 export interface VibeAgent {
   agent: Agent
-  /** 更新工具执行用的宿主回调（React 里回调身份会变，agent 只创建一次） */
+  /** Update the host callbacks used by tool execution (callback identities change in React, but the agent is created once) */
   setHost: (host: AgentHost) => void
-  /** 订阅自动重试事件（上游过载 / 限流时），返回取消函数 */
+  /** Subscribe to automatic retry events (upstream overload / rate limiting); returns an unsubscribe function */
   onRetry: (listener: (info: { attempt: number; delayMs: number; reason: string }) => void) => () => void
 }
 
@@ -152,7 +155,7 @@ export function createVibeAgent(initialHost?: AgentHost, initialMessages: AgentM
 
   const agent = new Agent({
     initialState: {
-      // 真正的系统提示在服务端拼装，这里只是占位
+      // The real system prompt is assembled on the server; this is only a placeholder
       systemPrompt: 'Vamp agent',
       model: createAgentModel(),
       thinkingLevel: 'high',
@@ -185,7 +188,7 @@ export function createVibeAgent(initialHost?: AgentHost, initialMessages: AgentM
     },
   })
 
-  // 上游偶发的过载 / 限流：把报错的 assistant 消息从历史里去掉，退避后自动续跑
+  // Occasional upstream overload / rate limiting: drop the failed assistant message from history, back off, and resume
   let retries = 0
   agent.subscribe((event) => {
     if (event.type === 'agent_start') {
@@ -209,8 +212,8 @@ export function createVibeAgent(initialHost?: AgentHost, initialMessages: AgentM
     }, delay)
   })
 
-  // 服务端根据环境变量决定实际模型（Anthropic / OpenAI 协议），同步到 Agent 状态里，
-  // 这样消息记录里的 api / provider / model 字段与真实调用一致
+  // The server picks the actual model from the environment (Anthropic / OpenAI protocol); mirror it
+  // into the agent state so the api / provider / model fields recorded on messages match the real call
   void fetchServerModel().then((model) => {
     if (model && !agent.state.isStreaming) agent.state.model = model
   })
@@ -240,7 +243,7 @@ async function fetchServerModel(): Promise<AgentModel | undefined> {
   }
 }
 
-/** 用户消息末尾附带的编辑器代码，用这两个标记包起来，UI 显示时去掉 */
+/** The editor code appended to a user message is wrapped in these markers and stripped before display */
 export const CODE_OPEN = '\n\n<current_code>\n'
 export const CODE_CLOSE = '\n</current_code>'
 

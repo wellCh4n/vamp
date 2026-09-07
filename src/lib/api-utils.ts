@@ -1,6 +1,6 @@
 import 'server-only'
 
-/** Route Handler 公用：JSON 响应、请求体解析、错误统一处理 */
+/** Shared route-handler helpers: JSON responses, body parsing, uniform error handling */
 
 export function json(status: number, body: unknown) {
   return Response.json(body, { status })
@@ -20,7 +20,7 @@ export function isUuid(value: string) {
   return UUID.test(value)
 }
 
-/** 把数据库不可用之类的错误转成可读的 500 */
+/** Turn errors like an unreachable database into a readable 500 */
 export function handleError(err: unknown) {
   const message = err instanceof Error ? err.message : String(err)
   console.error('[api]', message)

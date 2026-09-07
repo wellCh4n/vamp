@@ -8,7 +8,7 @@ export interface CheatSection {
   items: CheatItem[]
 }
 
-// 精简版速查（界面右侧面板用），完整内容见 docs/strudel-notes.md 和 skills/strudel/
+// Condensed cheatsheet for the right-hand panel; the full material is in docs/strudel-notes.md and skills/strudel/
 export const cheatsheet: CheatSection[] = [
   {
     title: 'Mini-notation',

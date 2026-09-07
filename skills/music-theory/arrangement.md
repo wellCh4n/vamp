@@ -1,22 +1,22 @@
-# 编排与结构
+# Arrangement and structure
 
-规则一句话：**分段，每段 4 或 8 小节，逐段加减声部，第二遍和第一遍不一样。**
+The rule in one line: **split it into sections of 4 or 8 bars, add and remove voices section by section, and make the second pass differ from the first.**
 
-## 最小结构
+## The minimum structure
 
 ```
-intro（4）→ A 主段（8）→ B 副歌 / 高潮（8）→ A'（8）→ outro（4）
+intro (4) -> A main section (8) -> B chorus / climax (8) -> A' (8) -> outro (4)
 ```
 
-- intro：一两个声部（鼓 + bass，或 pad + 旋律片段），让人知道速度和调。
-- A：完整的鼓、bass、和弦，旋律可以只有一半。
-- B：加东西——旋律翻高八度、和弦换七和弦、加副旋律、hh 变密、`room` 变大。
-- A'：回到 A，但保留 B 的一两个元素。
-- outro：逐个撤声部，或 `lpf` 慢慢关。
+- intro: one or two voices (drums + bass, or a pad plus a fragment of the melody) to establish the tempo and the key.
+- A: full drums, bass and chords; the melody may be only half present.
+- B: add something — the melody an octave up, sevenths instead of triads, a counter-melody, denser hats, a bigger `room`.
+- A': back to A, but keeping one or two elements from B.
+- outro: pull the voices out one at a time, or close the `lpf` slowly.
 
-## Strudel 里怎么分段
+## How to section it in Strudel
 
-### 方法一：`arrange`（最清楚）
+### Option 1: `arrange` (the clearest)
 
 ```js
 setcpm(110/4)
@@ -30,49 +30,49 @@ $: arrange(
   [4, stack(bass, chords)],                      // intro
   [8, stack(drums, bass, chords)],               // A
   [8, stack(drums, bass, chords, lead)],         // B
-  [8, stack(drums, bass, chords, lead.add(note(12)))],   // B'：旋律翻高
+  [8, stack(drums, bass, chords, lead.add(note(12)))],   // B': the melody an octave up
   [4, stack(chords)],                            // outro
 )
 ```
 
-`arrange([小节数, pattern], ...)` 按顺序播放，播完从头循环。小节数用 4 的倍数。
+`arrange([bars, pattern], ...)` plays the sections in order and loops back to the start. Use multiples of 4 for the bar counts.
 
-### 方法二：每轨用 `<>` 或 `mask` 控制出现
-
-```js
-$: drums.mask("<0 1 1 1>/4")            // 前 4 小节没鼓
-$: lead.mask("<0 0 1 1>/4")             // 第 9 小节起才有旋律
-$: chords.gain("<.4 .4 .7 .7>/4")       // 副歌变响
-```
-
-`mask` 的字符串是每小节一个 0/1，`/4` 把它拉长到每格 4 小节。这种方式改一轨不影响别的，适合 live coding 时逐步加。
-
-### 方法三：`every` / `sometimes` 做局部变化（不改结构）
+### Option 2: control each track's entry with `<>` or `mask`
 
 ```js
-$: drums.every(4, x => x.fast(2))                   // 每 4 小节末尾加倍做 fill
-$: lead.every(2, x => x.add(note(12)))              // 每 2 小节翻高一次
-$: hh.sometimesBy(.25, x => x.ply(2))               // 随机双击
-$: chords.lpf("<400 800 1600 4000>/4")              // 4 小节内滤波逐渐打开
+$: drums.mask("<0 1 1 1>/4")            // no drums for the first four bars
+$: lead.mask("<0 0 1 1>/4")             // the melody only from bar 9
+$: chords.gain("<.4 .4 .7 .7>/4")       // louder in the chorus
 ```
 
-## 加减声部的原则
+A `mask` string is one 0/1 per bar, and `/4` stretches each slot to four bars. Changing one track leaves the others alone, which suits live coding as you build up.
 
-- 一次只加或减一个声部，变化发生在 4 / 8 小节的边界上。
-- 上升段（往高潮走）：加声部、hh 变密、`lpf` 打开、`room` 变大、旋律升八度。
-- 下降段：先撤 kick（保留 hh 和 pad 会有"悬空"感），再撤 bass。
-- 过渡：段落最后一小节做 fill（鼓 `fast(2)`、`ply`）、或整个一拍静音 `"~"`、或加 crash `cr`。
-- 段落之间保留至少一个声部不变，让人知道还是同一首曲子。
+### Option 3: `every` / `sometimes` for local variation (no structural change)
 
-## 音色和空间的编排
+```js
+$: drums.every(4, x => x.fast(2))                   // a doubled fill at the end of every fourth bar
+$: lead.every(2, x => x.add(note(12)))              // an octave jump every two bars
+$: hh.sometimesBy(.25, x => x.ply(2))               // random doubles
+$: chords.lpf("<400 800 1600 4000>/4")              // the filter opening across four bars
+```
 
-- 每个声部一种空间：鼓干（`room 0–.2`），pad 湿（`room .5+ size .8`），lead 中等 + `delay`。
-- 全部声部都加大 `room` 会糊成一团。
-- 频率位置：bass 低（`lpf`），pad 中（`lpf 2000` 左右），hh / 装饰高（`hpf`）。
-- 高潮段可以把整体 `gain` 提高 10–20%，但先给前面留余地（主段 `gain .6–.8`）。
+## Principles for adding and removing voices
 
-## 长度与循环
+- Add or remove one voice at a time, and only at a 4- or 8-bar boundary.
+- Rising toward a climax: add voices, densify the hats, open the `lpf`, enlarge the `room`, take the melody up an octave.
+- Coming down: drop the kick first (keeping hats and pad gives a suspended feeling), then the bass.
+- Transitions: a fill in the last bar of a section (drums with `fast(2)` or `ply`), a whole beat of silence `"~"`, or a crash `cr`.
+- Keep at least one voice unchanged across a section boundary, so the listener knows it is still the same piece.
 
-- Strudel 是无限循环的，`arrange` 播完会从 intro 重来，这是正常的。
-- 用户说"太短 / 太快就重复了"：把 A、B 从 4 小节改成 8 小节，或在 `<>` 里多写几个变体。
-- 用户说"太单调"：先检查有没有 B 段，再加 `every`。
+## Arranging timbre and space
+
+- One kind of space per voice: dry drums (`room 0–.2`), a wet pad (`room .5+`, size .8), and a lead in between plus `delay`.
+- Raising `room` on every voice turns the mix to mush.
+- Frequency placement: bass low (`lpf`), pad in the middle (`lpf` around 2000), hats and ornaments high (`hpf`).
+- The climax can lift the overall `gain` by 10–20%, but leave headroom earlier (`gain .6–.8` in the main section).
+
+## Length and looping
+
+- Strudel loops forever, so `arrange` returns to the intro when it finishes. That is expected.
+- If the user says it is too short or repeats too soon: grow A and B from 4 bars to 8, or write more variants inside the `<>`.
+- If the user says it is monotonous: check that there is a B section at all, then add `every`.

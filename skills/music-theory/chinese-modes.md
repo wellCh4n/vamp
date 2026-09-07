@@ -1,91 +1,91 @@
-# 中国五声调式与中国风写法
+# Chinese pentatonic modes and writing in a Chinese style
 
-规则一句话：**用五声音阶，旋律级进 + 大跳后反向，句尾落在宫 / 徵 / 羽上，和声少用三音，节奏疏密结合，配笛子、筝、锣鼓音色。**
+The rule in one line: **use the pentatonic scale, move by step with a reversal after any leap, end phrases on gong / zhi / yu, keep thirds out of the harmony, alternate dense and sparse rhythms, and use dizi, zheng and percussion sounds.**
 
-## 五声音阶与五种调式
+## The pentatonic scale and its five modes
 
-五声 = 宫 商 角 徵 羽，对应大调五声的度数 0 1 2 3 4（C 宫：C D E G A）。在 Strudel 里统一用 `scale("<宫音>:major:pentatonic")`，**调式由旋律落在哪个音上决定**，不用换 scale。
+The five notes are gong, shang, jue, zhi and yu, corresponding to degrees 0 1 2 3 4 of the major pentatonic (in C gong: C D E G A). In Strudel always write `scale("<gong note>:major:pentatonic")`; **the mode is decided by which note the melody lands on**, not by changing the scale.
 
-| 调式 | 主音 | 度数（以宫为 0） | 色彩 | 写法 |
+| Mode | Tonic | Degree (gong = 0) | Color | How to write it |
 |---|---|---|---|---|
-| 宫调式 | 宫 | 0 | 明亮、端正 | 句尾落 0，`scale("C:major:pentatonic")` |
-| 商调式 | 商 | 1 | 略暗、古朴 | 句尾落 1 |
-| 角调式 | 角 | 2 | 少用、飘 | 句尾落 2 |
-| 徵调式 | 徵 | 3 | 明亮、开阔，民歌最常用 | 句尾落 3 |
-| 羽调式 | 羽 | 4 | 柔、忧、江南 | 句尾落 4；等于 `A:minor:pentatonic` 落 0 |
+| gong | gong | 0 | bright, upright | phrases end on 0, `scale("C:major:pentatonic")` |
+| shang | shang | 1 | slightly dark, archaic | phrases end on 1 |
+| jue | jue | 2 | rare, unmoored | phrases end on 2 |
+| zhi | zhi | 3 | bright and open, the most common in folk song | phrases end on 3 |
+| yu | yu | 4 | soft, melancholy, Jiangnan | phrases end on 4; equivalent to `A:minor:pentatonic` ending on 0 |
 
 ```js
-const key = "D:major:pentatonic"           // D 宫系统：D E F# A B
-$: n("<[0 1 2 1] [3 2 1 0] [4 3 2 1] [2 1 0 ~]>").scale(key).add(note(12)).s("gm_flute").clip(.9)   // 宫调式，句尾 0
-$: n("<[3 4 5 4] [3 2 1 3] [4 5 7 5] [4 3 3 ~]>").scale(key).add(note(12)).s("gm_flute").clip(.9)   // 徵调式，句尾 3
+const key = "D:major:pentatonic"           // the D gong system: D E F# A B
+$: n("<[0 1 2 1] [3 2 1 0] [4 3 2 1] [2 1 0 ~]>").scale(key).add(note(12)).s("gm_flute").clip(.9)   // gong mode, phrases end on 0
+$: n("<[3 4 5 4] [3 2 1 3] [4 5 7 5] [4 3 3 ~]>").scale(key).add(note(12)).s("gm_flute").clip(.9)   // zhi mode, phrases end on 3
 ```
 
-- 度数 5、6、7 是高八度的宫、商、角；负数往下。
-- 换宫（转调）用改 `key` 根音，常见的是上方五度（C 宫 → G 宫）或下方五度（C 宫 → F 宫）。
+- Degrees 5, 6 and 7 are gong, shang and jue an octave up; negative degrees go down.
+- Changing the gong system (modulating) means changing the root of `key`, most often up a fifth (C gong -> G gong) or down a fifth (C gong -> F gong).
 
-## 七声（加偏音）
+## Heptatonic scales (adding the auxiliary tones)
 
-五声之外加两个"偏音"就是七声，不同的偏音对应三种传统七声：
+Adding two "auxiliary tones" to the pentatonic gives a heptatonic scale, and which two you add gives one of three traditional systems:
 
-| 七声 | 偏音 | 等于 | Strudel |
+| System | Auxiliary tones | Equivalent to | Strudel |
 |---|---|---|---|
-| 清乐 | 清角（4）+ 变宫（7） | 大调 | `scale("C:major")` |
-| 雅乐 | 变徵（#4）+ 变宫（7） | Lydian | `scale("C:lydian")` |
-| 燕乐 | 清角（4）+ 闰（b7） | Mixolydian | `scale("C:mixolydian")` |
+| qingyue | qingjue (4) + biangong (7) | major | `scale("C:major")` |
+| yayue | bianzhi (#4) + biangong (7) | Lydian | `scale("C:lydian")` |
+| yanyue | qingjue (4) + run (b7) | Mixolydian | `scale("C:mixolydian")` |
 
-偏音只作经过音、弱拍，不要在强拍或句尾。日常写中国风用五声就够，偏音是加味道用的。
+Auxiliary tones work only as passing tones on weak beats — never on a strong beat or at the end of a phrase. Day to day, the pentatonic alone is enough; the auxiliary tones are there for flavor.
 
-## 旋律特征
+## Melodic traits
 
-- **级进为主**：五声里相邻两音是大二度或小三度，顺着走就有中国味；连续跳进会变成别的风格。
-- **大跳后反向**：跳了四度以上，下一个音往回走。
-- **典型的骨干走向**：徵 → 宫（3 → 0 或 3 → 5）、羽 → 宫（4 → 5）、商 → 宫（1 → 0）。句尾用这些。
-- **装饰**：滑音和倚音是中国乐器的特色，在 Strudel 里可以用短前倚音模拟：`n("[2 3]@1 ...")` 把一个短的邻音放在主音前；笛子颤音用 `.vib("4:.2")`。
-- **节奏**：慢板用长音和自由感（`@2`、`@3` 拉长，`~` 留白），快板用密集的八分和锣鼓点。句子常是"起承转合"四句，第三句变化、第四句回落。
-- **音区**：笛类音色写高一些（`.add(note(12))` 或 `scale("D5:...")`）。
+- **Mostly stepwise**: adjacent notes in the pentatonic are a major second or a minor third apart, so simply walking along it sounds Chinese; consecutive leaps turn it into some other style.
+- **Reverse after a leap**: after a leap of a fourth or more, the next note moves back.
+- **Typical structural motions**: zhi -> gong (3 -> 0 or 3 -> 5), yu -> gong (4 -> 5), shang -> gong (1 -> 0). Use these at phrase endings.
+- **Ornaments**: slides and appoggiaturas are characteristic of Chinese instruments. In Strudel, approximate them with a short grace note: `n("[2 3]@1 ...")` puts a brief neighbor tone before the main note, and a dizi trill is `.vib("4:.2")`.
+- **Rhythm**: a slow section wants long notes and a free feel (`@2`, `@3` to stretch, `~` for space), a fast one dense eighths and percussion strokes. Phrases usually come in fours — qi, cheng, zhuan, he — where the third varies and the fourth settles back.
+- **Register**: write flute-like sounds higher (`.add(note(12))` or `scale("D5:...")`).
 
-## 和声
+## Harmony
 
-中国传统音乐是单声部为主，和声要"薄"：
+Traditional Chinese music is largely monophonic, so keep the harmony thin:
 
-- 用四五度叠置或空五度，不要三度堆的大小三和弦：`note("[c3,g3]")`、`note("[d3,a3,e4]")`。
-- 或者只用宫、徵两个和弦来回：`chord("<C G>")` 但用 `.voicing()` 前把三音去掉不容易，更简单是手写 `note("<[c3,g3,d4] [g2,d3,a3]>")`。
-- 用五声的琶音代替和弦：`n("0 3 4 7").scale(key).s("gm_koto")`（筝的音型）。
-- 低音用宫或徵的长音（`clip(1)`）做持续音（drone）就够了。
+- Stack fourths and fifths, or use bare fifths, rather than third-stacked major and minor triads: `note("[c3,g3]")`, `note("[d3,a3,e4]")`.
+- Or alternate just gong and zhi: `chord("<C G>")` — though removing the third before `.voicing()` is awkward, so it is simpler to write it out: `note("<[c3,g3,d4] [g2,d3,a3]>")`.
+- Replace chords with a pentatonic arpeggio: `n("0 3 4 7").scale(key).s("gm_koto")` (a zheng figure).
+- In the bass, a held gong or zhi (`clip(1)`) as a drone is enough.
 
-## 音色搭配（本项目可用）
+## Sounds to use (available in this project)
 
-| 角色 | 音色 |
+| Role | Sound |
 |---|---|
-| 主旋律 | `gm_flute`、`gm_shakuhachi`（近箫）、`gm_pan_flute` |
-| 弹拨 / 筝 | `dantranh`（越南筝，近古筝）、`dantranh_tremolo`、`dantranh_vibrato`、`gm_koto`、`gm_dulcimer`（近扬琴） |
-| 拉弦 | `gm_fiddle`、`gm_violin`（无二胡采样时的替代） |
-| 打击 | 京剧锣鼓 `bangu`（板鼓）`xiaoluo`（小锣）`daluo`（大锣）`naobo`（铙钹）；`gong`、`gong2`、`woodblock`、`gm_taiko_drum`、`gm_woodblock` |
-| 铺底 | `gm_pad_warm`、`gm_string_ensemble_1` 小音量 |
+| lead melody | `gm_flute`, `gm_shakuhachi` (close to xiao), `gm_pan_flute` |
+| plucked / zheng | `dantranh` (the Vietnamese zither, close to guzheng), `dantranh_tremolo`, `dantranh_vibrato`, `gm_koto`, `gm_dulcimer` (close to yangqin) |
+| bowed | `gm_fiddle`, `gm_violin` (stand-ins where there is no erhu sample) |
+| percussion | Beijing opera `bangu` (bangu drum), `xiaoluo` (small gong), `daluo` (large gong), `naobo` (cymbals); plus `gong`, `gong2`, `woodblock`, `gm_taiko_drum`, `gm_woodblock` |
+| bed | `gm_pad_warm`, `gm_string_ensemble_1` at low volume |
 
-## 锣鼓经（打击乐写法）
+## Luogu jing (writing the percussion)
 
-京剧锣鼓是 2/4 或散板，四件乐器分工：板鼓（`bangu`）领奏并打细密的节奏，小锣（`xiaoluo`）打弱拍，大锣（`daluo`）打强拍，铙钹（`naobo`）在大锣之间。
+Beijing opera percussion is in 2/4 or free meter, with four instruments dividing the work: the bangu drum (`bangu`) leads with a fine-grained rhythm, the small gong (`xiaoluo`) takes the weak beats, the large gong (`daluo`) the strong ones, and the cymbals (`naobo`) fall between the large gong strokes.
 
 ```js
-setcpm(90/2)                                          // 2/4，一个 cycle 两拍
-$: s("bangu*8").n("<0 5 12 20>*8").gain("1 .5 .7 .5")   // 板鼓细密
-$: s("daluo ~ ~ ~").n(3)                               // 大锣落强拍
-$: s("~ xiaoluo ~ xiaoluo").n("<7 12>")                // 小锣弱拍
-$: s("~ ~ naobo ~").n(10)                               // 铙钹在中间
+setcpm(90/2)                                          // 2/4, two beats per cycle
+$: s("bangu*8").n("<0 5 12 20>*8").gain("1 .5 .7 .5")   // the bangu, fine-grained
+$: s("daluo ~ ~ ~").n(3)                               // the large gong on the strong beat
+$: s("~ xiaoluo ~ xiaoluo").n("<7 12>")                // the small gong on weak beats
+$: s("~ ~ naobo ~").n(10)                               // the cymbals in between
 ```
 
-- 常见的"仓 才 仓 才"：仓 = 大锣 + 铙钹，才 = 小锣。`s("[daluo,naobo] xiaoluo [daluo,naobo] xiaoluo")`。
-- 每件乐器的 `n` 选不同的击法（力度、位置），换 `n` 就是换音色。
-- 单独一声大锣用来结束段落：`.mask("<0 0 0 1>")`。
+- The common "cang cai cang cai" figure: cang = large gong plus cymbals, cai = small gong. `s("[daluo,naobo] xiaoluo [daluo,naobo] xiaoluo")`.
+- Each instrument's `n` picks a different stroke (force, position), so changing `n` changes the timbre.
+- A single large gong stroke ends a section: `.mask("<0 0 0 1>")`.
 
-## 一个完整的示例骨架
+## A complete skeleton
 
 ```js
 setcpm(80/4)
 const key = "D:major:pentatonic"
-$: note("<[d2,a2] [d2,a2] [g2,d3] [a2,e3]>").s("gm_pad_warm").clip(1).gain(.4).room(.6)      // 空五度铺底
-$: n("<[0 3 4 7] [0 3 4 7] [-2 0 3 4] [-1 1 3 4]>").scale(key).s("dantranh").gain(.5)        // 筝的音型
-$: n("<[5 ~ 6 5] [4 3 ~ 3] [4 5 7 5] [4 3 3 ~]>").scale(key).add(note(12)).s("gm_flute").clip(.9).vib("4:.15").room(.4)   // 徵调式旋律
-$: s("~ xiaoluo ~ [xiaoluo daluo]").n("<7 12>").gain(.5).mask("<0 1 1 1>")                   // 第二小节起进锣
+$: note("<[d2,a2] [d2,a2] [g2,d3] [a2,e3]>").s("gm_pad_warm").clip(1).gain(.4).room(.6)      // a bed of bare fifths
+$: n("<[0 3 4 7] [0 3 4 7] [-2 0 3 4] [-1 1 3 4]>").scale(key).s("dantranh").gain(.5)        // a zheng figure
+$: n("<[5 ~ 6 5] [4 3 ~ 3] [4 5 7 5] [4 3 3 ~]>").scale(key).add(note(12)).s("gm_flute").clip(.9).vib("4:.15").room(.4)   // a zhi-mode melody
+$: s("~ xiaoluo ~ [xiaoluo daluo]").n("<7 12>").gain(.5).mask("<0 1 1 1>")                   // gongs entering from the second bar
 ```

@@ -1,6 +1,6 @@
 # Function index
 
-每行：`name` (synonyms) — 一句话说明 → 所在文件。详细说明和示例用 read_doc 读对应文件的该标题。
+Each line: `name` (synonyms) - a one-line description, grouped by the file it lives in. For the full description and examples, read that heading of that file with read_doc.
 
 ## reference/controls.md
 

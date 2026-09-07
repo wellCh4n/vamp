@@ -1,8 +1,8 @@
 # Sample loading & sound aliases
 
-加载采样、别名、复音数设置等（@strudel/webaudio / superdough）。
+Loading samples, aliases, polyphony settings and the like (@strudel/webaudio / superdough).
 
-共 6 项。每项：名称、同义名、说明、参数、示例。
+6 entries. Each one lists name, synonyms, description, parameters and examples.
 
 ## Other
 

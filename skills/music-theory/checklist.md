@@ -1,21 +1,21 @@
-# 乐理检查清单（写曲前后各过一遍）
+# Theory checklist (run it once before writing and once after)
 
-这套乐理资料的目的只有一个：让写出来的 Strudel 代码"听起来对"。每篇都给出规则、为什么、以及 Strudel 里的写法。本篇是总入口，先按下面的顺序把决定做完，再打开对应的篇目查细节。
+This material exists for one reason: to make the Strudel code you write *sound right*. Every file gives the rule, the reason, and the Strudel spelling. This one is the entry point: make the decisions below in order, then open the file that covers the details.
 
-## 写之前：先定五件事
+## Before writing: decide five things
 
-1. **调**：一个根音 + 一种音阶，写成 `"C:major"` 这样的字符串，之后所有 `n().scale()` 都用它。默认选择：明亮用 `C:major` / `G:major`，忧郁用 `A:minor` / `D:minor`，中国风、电子、lofi 常用五声 `C:major:pentatonic` / `A:minor:pentatonic`。→ `music-theory/scales-and-keys.md`
-2. **拍号与速度**：绝大多数曲子 4/4，`setcpm(bpm/4)` 让一个 cycle 正好是一小节。速度按曲风取值。→ `music-theory/rhythm-and-meter.md`
-3. **和弦进行**：4 或 8 小节一轮，每小节 1 个和弦，写成 `chord("<C Am F G>")`。不知道选什么就用本篇下面的默认进行。→ `music-theory/chords-and-progressions.md`
-4. **声部分工与音区**：鼓 / bass（2 八度）/ 和弦（3–4 八度）/ 旋律（4–5 八度）/ 装饰，各占各的位置。→ `music-theory/bass-and-voice-leading.md`
-5. **结构**：至少 intro → 主段 → 变化段，用 `arrange` 或 `<>` 实现，别让一个 cycle 循环到底。→ `music-theory/arrangement.md`
+1. **Key**: one root plus one scale, written as a string like `"C:major"`, and used by every `n().scale()` afterwards. Defaults: `C:major` / `G:major` for something bright, `A:minor` / `D:minor` for something wistful, and the pentatonics `C:major:pentatonic` / `A:minor:pentatonic` for Chinese style, electronic and lofi. -> `music-theory/scales-and-keys.md`
+2. **Meter and tempo**: almost everything is 4/4, and `setcpm(bpm/4)` makes one cycle exactly one bar. Pick the tempo by genre. -> `music-theory/rhythm-and-meter.md`
+3. **Chord progression**: four or eight bars per round, one chord per bar, written as `chord("<C Am F G>")`. When in doubt use the default progression below. -> `music-theory/chords-and-progressions.md`
+4. **Voices and registers**: drums / bass (octave 2) / chords (octaves 3–4) / melody (octaves 4–5) / ornaments, each in its own space. -> `music-theory/bass-and-voice-leading.md`
+5. **Structure**: at least intro -> main section -> variation, built with `arrange` or `<>`. Never loop one cycle from start to finish. -> `music-theory/arrangement.md`
 
-## 默认方案（拿不准就用这个，不会出错）
+## The default arrangement (use it when unsure; it will not go wrong)
 
 ```js
 setcpm(100/4)
 const key = "C:major"
-const prog = "<C Am F G>"          // 每小节一个和弦，4 小节一轮
+const prog = "<C Am F G>"          // one chord per bar, four bars per round
 
 $: s("bd ~ sd ~, hh*8").bank("RolandTR909").gain(".9 .6")
 $: chord(prog).voicing().s("gm_epiano1").room(.3).gain(.6)
@@ -23,25 +23,25 @@ $: chord(prog).rootNotes(2).note().s("gm_acoustic_bass").clip(.9)
 $: n("<[0 2 4 2] [0 ~ 4 7] [2 4 5 4] [4 2 0 ~]>").scale(key).s("piano").add(note(12))
 ```
 
-这段能成立的原因：和弦按小节走；bass 在每小节第一拍弹根音；旋律的每小节第一个音（0、0、2、4）都是当前和弦的和弦音；所有声部共用 `key`；音区分开。
+Why it holds together: the harmony moves by the bar; the bass plays the root on the first beat of each bar; the first melody note of each bar (0, 0, 2, 4) is a chord tone of that bar's chord; every voice shares `key`; and the registers are separated.
 
-## 写完之后：对照检查
+## After writing: check against this list
 
-- [ ] 所有旋律 / bass 都通过 `.scale(key)` 写度数？有没有手写的 `note("c# ...")` 混进别的调？
-- [ ] 每小节开头 bass 弹的是那小节和弦的根音？
-- [ ] 旋律每小节第一个音是和弦音（对主和弦是度数 0 / 2 / 4，对其他和弦见 chords 篇的对照表）？
-- [ ] 乐句是 2 或 4 小节一句，最后一句回到主音（度数 0）或五音（度数 4）？
-- [ ] 有没有两个声部挤在同一音区同时动？
-- [ ] 同一时刻在动的声部不超过 3 个？hh 之类的填充是不是盖过了主旋律？
-- [ ] 至少有一处 `<>`、`every`、`sometimes` 或 `arrange` 让第 2 遍和第 1 遍不一样？
-- [ ] 速度、鼓型和用户点名的曲风匹配（见鼓型库和 rhythm 篇的速度表）？
+- [ ] Is every melody and bass line written as degrees through `.scale(key)`? Has a hand-written `note("c# ...")` from another key slipped in?
+- [ ] Does the bass play the root of the bar's chord at the start of each bar?
+- [ ] Is the melody's first note in each bar a chord tone (degrees 0 / 2 / 4 over the tonic; see the table in the chords file for the others)?
+- [ ] Are phrases 2 or 4 bars long, with the last one returning to the tonic (degree 0) or the fifth (degree 4)?
+- [ ] Are two voices crowded into the same register while both moving?
+- [ ] Are at most three voices moving at any moment? Is a filler like hats drowning the melody?
+- [ ] Is there at least one `<>`, `every`, `sometimes` or `arrange` making the second pass differ from the first?
+- [ ] Do the tempo and drum pattern match the genre the user named (see the drum library and the tempo table in the rhythm file)?
 
-## 用户反馈对应的修法
+## The fix for each kind of feedback
 
-| 用户说 | 大概率原因 | 先改这里 |
+| The user says | Most likely cause | Fix this first |
 |---|---|---|
-| 不协和 / 有音不对 | 调外音、旋律强拍不在和弦音上、bass 没走根音 | 检查清单前三条 |
-| 太乱 / 太吵 | 同时在动的声部太多，音区重叠，hh 太密太响 | 删声部、分音区、hh 降 gain |
-| 单调 / 没起伏 | 一个 cycle 循环到底 | `<>` 变化、`arrange` 分段、加 `every` |
-| 没有中国味 | 用了七声大调而不是五声，旋律大跳太多，没有落在徵 / 羽上 | `music-theory/chinese-modes.md` |
-| 不像 XX 曲风 | 速度 / 鼓型 / 和弦类型不对 | rhythm 篇速度表 + 鼓型库 + chords 篇的曲风进行表 |
+| dissonant / a note sounds wrong | notes outside the key, melody not on chord tones at strong beats, bass not following the roots | the first three items of the checklist |
+| messy / too noisy | too many voices moving at once, overlapping registers, hats too dense or too loud | drop voices, separate registers, lower the hat gain |
+| monotonous / no shape | one cycle looping from start to finish | vary with `<>`, section with `arrange`, add `every` |
+| does not sound Chinese | a heptatonic major instead of a pentatonic, too many leaps, phrases not landing on zhi / yu | `music-theory/chinese-modes.md` |
+| does not sound like <genre> | wrong tempo / drum pattern / chord types | the tempo table in the rhythm file + the drum library + the genre progressions in the chords file |

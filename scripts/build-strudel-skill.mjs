@@ -1,12 +1,15 @@
 #!/usr/bin/env node
 /**
- * 把 Strudel 官方仓库里的文档、函数参考（JSDoc）、示例曲和鼓型整理成 skills/strudel/ 目录，
- * 供 Agent 渐进式阅读（SKILL.md 进系统提示，其余文件按需用 read_doc / search_docs 工具读取）。
+ * Turns the docs, function reference (JSDoc), example tunes and drum patterns from the official
+ * Strudel repository into the skills/strudel/ directory, for the agent to read progressively
+ * (SKILL.md goes into the system prompt; the rest is read on demand through the read_doc /
+ * search_docs tools).
  *
- * 用法：npm run skill:build
- *   - 默认把 Strudel 仓库稀疏克隆到 .cache/strudel（可用 STRUDEL_SRC 指定已有的克隆）
- *   - 用仓库自带的 jsdoc 配置生成 doc.json（函数参考）
- *   - 输出到 skills/strudel/，并刷新 SKILL.md 里 generated 标记之间的索引
+ * Usage: npm run skill:build
+ *   - sparse-clones the Strudel repository into .cache/strudel by default (STRUDEL_SRC points at an
+ *     existing clone instead)
+ *   - runs the repository's own jsdoc config to produce doc.json (the function reference)
+ *   - writes to skills/strudel/ and refreshes the index between the generated markers in SKILL.md
  */
 import { execSync } from 'node:child_process'
 import fs from 'node:fs'
@@ -18,7 +21,7 @@ const SRC = process.env.STRUDEL_SRC || path.join(ROOT, '.cache', 'strudel')
 const REPO = 'https://codeberg.org/uzu/strudel.git'
 const SPARSE_PATHS = ['website/src/pages', 'website/src/repl', 'packages', 'jsdoc']
 
-// ---------- 1. 准备源码和 doc.json ----------
+// ---------- 1. Prepare the source and doc.json ----------
 
 function ensureSource() {
   if (!fs.existsSync(path.join(SRC, 'website', 'src', 'pages'))) {
@@ -40,7 +43,7 @@ function ensureSource() {
   return JSON.parse(fs.readFileSync(docJson, 'utf8')).docs
 }
 
-// ---------- 工具函数 ----------
+// ---------- Helpers ----------
 
 function stripHtml(html = '') {
   return html
@@ -58,7 +61,7 @@ function stripHtml(html = '') {
     .trim()
 }
 
-/** JSDoc 注释原文里 @tag 之前的部分就是 markdown 描述 */
+/** In a raw JSDoc comment, everything before the first @tag is the markdown description */
 function docDescription(item) {
   const raw = (item.comment || '').replace(/^\/\*\*\s*/, '').replace(/\s*\*\/$/, '')
   const out = []
@@ -95,15 +98,15 @@ function write(rel, content) {
   fs.writeFileSync(file, content.replace(/\n{3,}/g, '\n\n').trimEnd() + '\n')
 }
 
-// ---------- 2. 函数参考 ----------
+// ---------- 2. Function reference ----------
 
 const SKIP_TAGS = new Set(['internals', 'internal'])
-/** 只收浏览器里能用的包 */
+/** Only the packages usable in the browser */
 const REFERENCE_GROUPS = [
   {
     file: 'reference/controls.md',
     title: 'Sound & effect controls',
-    intro: '声音参数和效果器参数。每个控制既可以当函数调用（`lpf(1000)`），也可以当 pattern 方法链式调用（`.lpf("<500 2000>")`），参数都可以是 pattern / mini-notation。',
+    intro: 'Sound and effect parameters. Every control can be called as a function (`lpf(1000)`) or chained as a pattern method (`.lpf("<500 2000>")`), and every argument can be a pattern / mini-notation.',
     match: (d) => d.meta?.filename === 'controls.mjs',
     sections: [
       ['samples', 'Sound & samples'],
@@ -123,7 +126,7 @@ const REFERENCE_GROUPS = [
   {
     file: 'reference/pattern.md',
     title: 'Pattern functions',
-    intro: 'Pattern 变换函数：时间、结构、条件、叠加、随机、数值运算等。大多数既是 `Pattern` 方法，也可以作为独立函数调用。',
+    intro: 'Pattern transformations: time, structure, conditionals, layering, randomness, arithmetic and more. Most are both `Pattern` methods and standalone functions.',
     match: (d) => ['pattern.mjs', 'pick.mjs', 'euclid.mjs', 'util.mjs', 'evaluate.mjs', 'repl.mjs'].includes(d.meta?.filename ?? ''),
     sections: [
       ['temporal', 'Time'],
@@ -139,7 +142,7 @@ const REFERENCE_GROUPS = [
   {
     file: 'reference/signals.md',
     title: 'Signals & randomness',
-    intro: '连续信号（sine、saw、perlin…）和随机函数（rand、choose、degradeBy、sometimes…）。信号取值发生在事件触发时，要连续变化需配合 `segment`。',
+    intro: 'Continuous signals (sine, saw, perlin, …) and random functions (rand, choose, degradeBy, sometimes, …). A signal is sampled when an event fires, so pair it with `segment` for continuous movement.',
     match: (d) => d.meta?.filename === 'signal.mjs',
     sections: [
       ['generators', 'Signals'],
@@ -152,21 +155,21 @@ const REFERENCE_GROUPS = [
   {
     file: 'reference/tonal.md',
     title: 'Tonal (scales, chords, voicings)',
-    intro: '来自 @strudel/tonal：音阶、和弦、voicing。',
+    intro: 'From @strudel/tonal: scales, chords and voicings.',
     match: (d) => ['tonal.mjs', 'voicings.mjs'].includes(d.meta?.filename ?? ''),
     sections: [],
   },
   {
     file: 'reference/samples.md',
     title: 'Sample loading & sound aliases',
-    intro: '加载采样、别名、复音数设置等（@strudel/webaudio / superdough）。',
+    intro: 'Loading samples, aliases, polyphony settings and the like (@strudel/webaudio / superdough).',
     match: (d) => ['sampler.mjs', 'superdough.mjs'].includes(d.meta?.filename ?? ''),
     sections: [],
   },
   {
     file: 'reference/draw.md',
     title: 'Visualization',
-    intro: 'pianoroll、scope、spectrum、spiral、pitchwheel 等可视化函数（本项目编辑器下方已自带 pianoroll / 波形 / 频谱，一般不需要在代码里调用）。',
+    intro: 'Visualization functions such as pianoroll, scope, spectrum, spiral and pitchwheel (this project already shows a pianoroll / scope / spectrum below the editor, so calling them from code is rarely needed).',
     match: (d) => ['pianoroll.mjs', 'spiral.mjs', 'pitchwheel.mjs', 'scope.mjs', 'spectrum.mjs', 'drawLine.mjs'].includes(d.meta?.filename ?? ''),
     sections: [],
   },
@@ -175,7 +178,7 @@ const REFERENCE_GROUPS = [
 function isUserFacing(d) {
   if (!d.name || d.kind === 'package' || d.kind === 'class') return false
   if ((d.tags || []).some((t) => SKIP_TAGS.has(t))) return false
-  if (d.longname.includes('#')) return false // Pattern.prototype 内部方法
+  if (d.longname.includes('#')) return false // internal Pattern.prototype methods
   if (d.access === 'private' || d.undocumented || d.name.startsWith('_')) return false
   return (d.examples?.length ?? 0) > 0 || (d.tags?.length ?? 0) > 0
 }
@@ -212,7 +215,7 @@ function buildReference(docs) {
         bySection.get(section[1]).push(d)
       } else rest.push(d)
     }
-    const parts = [`# ${group.title}`, '', group.intro, '', `共 ${items.length} 项。每项：名称、同义名、说明、参数、示例。`]
+    const parts = [`# ${group.title}`, '', group.intro, '', `${items.length} entries. Each one lists name, synonyms, description, parameters and examples.`]
     const ordered = [...group.sections.map((s) => s[1]).filter((t) => bySection.has(t)), ...(rest.length ? ['Other'] : [])]
     for (const title of ordered) {
       const list = title === 'Other' ? rest : bySection.get(title)
@@ -225,8 +228,8 @@ function buildReference(docs) {
       index.push({ file: group.file, name: d.name, synonyms: d.synonyms ?? [], summary: firstSentence(stripHtml(d.description || '')) })
     }
   }
-  // 函数索引：一行一个，便于 search_docs 命中
-  const lines = ['# Function index', '', '每行：`name` (synonyms) — 一句话说明 → 所在文件。详细说明和示例用 read_doc 读对应文件的该标题。', '']
+  // Function index: one per line, so search_docs can hit it
+  const lines = ['# Function index', '', 'Each line: `name` (synonyms) - a one-line description, grouped by the file it lives in. For the full description and examples, read that heading of that file with read_doc.', '']
   let currentFile = ''
   for (const e of index) {
     if (e.file !== currentFile) {
@@ -239,10 +242,10 @@ function buildReference(docs) {
   return { namesByFile, count: index.length }
 }
 
-// ---------- 3. 教程 / 专题文档（mdx → md）----------
+// ---------- 3. Tutorials and topic pages (mdx -> md) ----------
 
 const PAGES = [
-  // [源目录, 输出前缀, 包含的页面（顺序即阅读顺序）]
+  // [source directory, output prefix, pages to include (in reading order)]
   ['workshop', 'workshop', ['getting-started', 'first-sounds', 'first-notes', 'first-effects', 'pattern-effects', 'recap']],
   [
     'learn',
@@ -291,11 +294,11 @@ function convertMdx(mdx, docsByName, warn) {
   md = md.replace(/^import .*$/gm, '')
   md = md.replace(/\{\/\*[\s\S]*?\*\/\}/g, '')
 
-  // <MiniRepl tune={`...`} /> → 代码块
+  // <MiniRepl tune={`...`} /> -> a code block
   md = md.replace(/<MiniRepl\b[\s\S]*?tune=\{`((?:[^`\\]|\\.)*)`\}[\s\S]*?\/>/g, (_, code) => `\n\`\`\`js\n${unescapeTemplate(code).trim()}\n\`\`\`\n`)
   md = md.replace(/<MiniRepl\b[\s\S]*?\/>/g, '')
 
-  // <JsDoc name="x" h={0} hideDescription /> → 内联函数说明
+  // <JsDoc name="x" h={0} hideDescription /> -> an inline function description
   md = md.replace(/<JsDoc\b([\s\S]*?)\/>/g, (_, attrs) => {
     const name = attrs.match(/name="([^"]+)"/)?.[1]
     const h = attrs.match(/h=\{(\d)\}/)?.[1]
@@ -352,7 +355,7 @@ function buildPages(docsByName, warn) {
   return index
 }
 
-// ---------- 4. 示例曲和鼓型 ----------
+// ---------- 4. Example tunes and drum patterns ----------
 
 function parseExports(source) {
   const out = []
@@ -367,8 +370,8 @@ function buildTunes() {
   const lines = [
     '# Example tunes',
     '',
-    `Strudel 官方 REPL 自带的 ${tunes.length} 首示例曲（AGPL-3.0，Strudel contributors，部分曲子注释里有作者署名）。`,
-    '每首一个二级标题，可用 read_doc 带 heading 只读一首。适合作为编曲结构、音色搭配、和声写法的参考。',
+    `The ${tunes.length} example tunes shipped with the official Strudel REPL (AGPL-3.0, Strudel contributors; some tunes credit their author in a comment).`,
+    'One level-two heading per tune, so read_doc with a heading returns just one. A good reference for arrangement structure, sound choices and harmony.',
     '',
   ]
   const index = []
@@ -394,12 +397,12 @@ function buildDrums() {
     groups.get(genre).push({ name: p.name, code: p.code.replace(/^\/\/.*\n/gm, '').trim() })
   }
   const attribution =
-    '来源：Strudel 官方 REPL 的 drum_patterns.mjs，原始数据来自 https://github.com/lvm/tidal-drum-patterns （GPL-3.0），用 https://github.com/urswilke/read_beats 转换。'
-  const indexLines = ['# Drum pattern index', '', attribution, '', '按曲风分文件，每个文件里每个鼓型一个二级标题。鼓型都是 `stack("...", "...").s().slow(2)` 的形式：每行一个鼓件，`[x ~ ~ ~]` 一组是一拍（16 分音符），4 组一小节，`slow(2)` 把两小节摊到两个 cycle。', '', '用法：把 `.s()` 里加上 `.bank("RolandTR909")` 换音色；把某一行拿出来单独用 `$: s("...")`。', '']
+    'Source: drum_patterns.mjs from the official Strudel REPL. The underlying data comes from https://github.com/lvm/tidal-drum-patterns (GPL-3.0), converted with https://github.com/urswilke/read_beats.'
+  const indexLines = ['# Drum pattern index', '', attribution, '', 'One file per genre, with a level-two heading per pattern. Every pattern has the shape `stack("...", "...").s().slow(2)`: one line per drum, each `[x ~ ~ ~]` group is one beat (sixteenth notes), four groups make a bar, and `slow(2)` spreads two bars over two cycles.', '', 'Usage: add `.bank("RolandTR909")` after `.s()` to change the kit, or lift a single line out on its own with `$: s("...")`.', '']
   const genres = []
   for (const [genre, list] of [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
     const rel = `examples/drums/${kebab(genre)}.md`
-    const lines = [`# ${genre} drum patterns`, '', attribution, '', `${list.length} 个鼓型。`, '']
+    const lines = [`# ${genre} drum patterns`, '', attribution, '', `${list.length} patterns.`, '']
     for (const p of list) lines.push(`## ${p.name}`, '', '```js', p.code, '```', '')
     write(rel, lines.join('\n'))
     indexLines.push(`- [${genre}](${rel}) (${list.length}): ${list.map((p) => p.name).join(', ')}`)
@@ -409,7 +412,7 @@ function buildDrums() {
   return genres
 }
 
-// ---------- 4b. 音色清单（本项目预加载的采样 / soundfont）----------
+// ---------- 4b. Sound list (the samples / soundfonts this project preloads) ----------
 
 const CDN = 'https://strudel.b-cdn.net'
 const SAMPLE_SOURCES = [
@@ -420,12 +423,12 @@ const SAMPLE_SOURCES = [
   ['vcsl.json', `${CDN}/vcsl.json`],
   ['dirt-samples.json', 'https://raw.githubusercontent.com/tidalcycles/dirt-samples/main/strudel.json'],
 ]
-/** 本项目自带的映射（public/samples/<dir>/*.json），直接读本地文件；一个目录可有多份映射 */
+/** Maps shipped with this project (public/samples/<dir>/*.json), read straight off disk; a directory may hold several */
 const LOCAL_SAMPLE_MAPS = [
   [
     'chinese-traditional',
     ['strudel.json'],
-    '京剧锣鼓（单击采样，`n` 选第几个）：板鼓 `bangu`、小锣 `xiaoluo`、大锣 `daluo`、铙钹 `naobo`。来源与授权见 public/samples/chinese-traditional/README.md。',
+    'Beijing opera percussion (single-stroke samples, picked with `n`): bangu drum `bangu`, small gong `xiaoluo`, large gong `daluo`, cymbals `naobo`. Sources and licenses are in public/samples/chinese-traditional/README.md.',
   ],
 ]
 
@@ -449,7 +452,7 @@ function sampleEntries(map) {
 }
 
 function fmtList(entries) {
-  return entries.map((e) => (e.pitched ? `${e.name}（按音高）` : e.count > 1 ? `${e.name}(${e.count})` : e.name)).join(', ')
+  return entries.map((e) => (e.pitched ? `${e.name} (pitched)` : e.count > 1 ? `${e.name}(${e.count})` : e.name)).join(', ')
 }
 
 async function buildSounds() {
@@ -475,28 +478,28 @@ async function buildSounds() {
   const lines = [
     '# Available sounds',
     '',
-    '本项目启动时预加载的全部音色名（由 scripts/build-strudel-skill.mjs 从官方 CDN 清单生成）。`s("name")` 只能用这里出现的名字；`n` 或 `name:n` 选同名采样里的第几个。',
+    'Every sound name this project preloads at startup (generated by scripts/build-strudel-skill.mjs from the official CDN manifests). `s("name")` only accepts names listed here; `n` or `name:n` picks which sample of that name to use.',
     '',
-    '## Synths（无需加载）',
+    '## Synths (no loading needed)',
     '',
-    '`sine sawtooth(saw) square triangle(tri) supersaw` · 噪声 `white pink brown crackle` · ZZFX `z_sawtooth z_tan z_noise z_sine z_square`。只写 `note()` 不写 `s()` 默认 `triangle`。',
+    '`sine sawtooth(saw) square triangle(tri) supersaw` - noise `white pink brown crackle` - ZZFX `z_sawtooth z_tan z_noise z_sine z_square`. `note()` without `s()` defaults to `triangle`.',
     '',
     '## Drum machines',
     '',
-    '用 `s("bd sd hh").bank("RolandTR909")`，或直接 `s("RolandTR909_bd")`。别名（如 `bank("tr909")`）也可用。每个 bank 后面列出它有的鼓件：',
+    'Use `s("bd sd hh").bank("RolandTR909")`, or `s("RolandTR909_bd")` directly. Aliases such as `bank("tr909")` work too. Each bank is followed by the drums it has:',
     '',
   ]
   for (const [bank, keys] of [...banks.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
-    lines.push(`- **${bank}**${alias[bank] ? `（别名 ${alias[bank]}）` : ''}: ${keys.sort().join(' ')}`)
+    lines.push(`- **${bank}**${alias[bank] ? ` (alias ${alias[bank]})` : ''}: ${keys.sort().join(' ')}`)
   }
-  lines.push('', '## Default drum kit（不带 bank 时的 bd sd hh …，来自 uzu-drumkit）', '', fmtList(sampleEntries(data['uzu-drumkit.json'])))
-  lines.push('', '## Piano', '', fmtList(sampleEntries(data['piano.json'])), '', '`note("c e g").s("piano")` 或 `.piano()`。')
-  lines.push('', '## Dirt-Samples（Tidal 经典采样包，括号里是同名采样个数，用 `n` 选择）', '', fmtList(sampleEntries(data['dirt-samples.json'])))
-  lines.push('', '## VCSL（Versilian 乐器采样，多为打击乐 / 民族乐器）', '', fmtList(sampleEntries(data['vcsl.json'])))
+  lines.push('', '## Default drum kit (the bd sd hh … used without a bank, from uzu-drumkit)', '', fmtList(sampleEntries(data['uzu-drumkit.json'])))
+  lines.push('', '## Piano', '', fmtList(sampleEntries(data['piano.json'])), '', '`note("c e g").s("piano")` or `.piano()`.')
+  lines.push('', '## Dirt-Samples (the classic Tidal sample pack; the number in parentheses is how many samples share the name, picked with `n`)', '', fmtList(sampleEntries(data['dirt-samples.json'])))
+  lines.push('', '## VCSL (Versilian instrument samples, mostly percussion and folk instruments)', '', fmtList(sampleEntries(data['vcsl.json'])))
   for (const [dir, desc, map] of local) {
-    lines.push('', '## Chinese traditional', '', `本项目自带（public/samples/${dir}）。${desc}`, '', fmtList(sampleEntries(map)))
+    lines.push('', '## Chinese traditional', '', `Shipped with this project (public/samples/${dir}). ${desc}`, '', fmtList(sampleEntries(map)))
   }
-  lines.push('', `## GM soundfonts（${gm.length} 个，按需从 CDN 加载，第一次触发会稍有延迟）`, '', '用 `note("c e g").s("gm_epiano1")`。', '', gm.join(', '))
+  lines.push('', `## GM soundfonts (${gm.length} of them, loaded from the CDN on demand, so the first trigger lags slightly)`, '', 'Use `note("c e g").s("gm_epiano1")`.', '', gm.join(', '))
   write('reference/sounds.md', lines.join('\n'))
   return {
     banks: banks.size,
@@ -507,7 +510,7 @@ async function buildSounds() {
   }
 }
 
-// ---------- 5. SKILL.md 索引 & 附注 ----------
+// ---------- 5. SKILL.md index and attribution ----------
 
 function buildAttribution() {
   write(
@@ -515,15 +518,15 @@ function buildAttribution() {
     [
       '# Sources & licenses',
       '',
-      '本目录由 scripts/build-strudel-skill.mjs 从 Strudel 官方仓库 https://codeberg.org/uzu/strudel 生成，请勿手改（SKILL.md 除外）。',
+      'This directory is generated by scripts/build-strudel-skill.mjs from the official Strudel repository https://codeberg.org/uzu/strudel. Do not edit it by hand (SKILL.md excepted).',
       '',
-      '- workshop/ learn/ recipes/ understand/ functions/：strudel.cc 网站文档（website/src/pages），AGPL-3.0，Strudel contributors。',
-      '- reference/：packages/ 源码里的 JSDoc 注释，AGPL-3.0，Strudel contributors。',
-      '- examples/tunes.md：website/src/repl/tunes.mjs，AGPL-3.0，Strudel contributors（部分曲子注释里有作者署名）。',
-      '- examples/drums/：website/src/repl/drum_patterns.mjs，数据来自 lvm/tidal-drum-patterns（GPL-3.0）。',
-      '- reference/sounds.md：strudel.b-cdn.net 上的采样清单（tidal-drum-machines、uzu-drumkit、piano、VCSL）、tidalcycles/dirt-samples 的 strudel.json、@strudel/soundfonts 的 GM 列表、本项目 public/samples/ 下的映射（来源与授权见各目录 README）。',
+      '- workshop/ learn/ recipes/ understand/ functions/: the strudel.cc website docs (website/src/pages), AGPL-3.0, Strudel contributors.',
+      '- reference/: JSDoc comments from the packages/ source, AGPL-3.0, Strudel contributors.',
+      '- examples/tunes.md: website/src/repl/tunes.mjs, AGPL-3.0, Strudel contributors (some tunes credit their author in a comment).',
+      '- examples/drums/: website/src/repl/drum_patterns.mjs, with data from lvm/tidal-drum-patterns (GPL-3.0).',
+      '- reference/sounds.md: the sample manifests on strudel.b-cdn.net (tidal-drum-machines, uzu-drumkit, piano, VCSL), the strudel.json of tidalcycles/dirt-samples, the GM list from @strudel/soundfonts, and the maps under this project\'s public/samples/ (sources and licenses in each directory\'s README).',
       '',
-      `生成时间：${new Date().toISOString().slice(0, 10)}`,
+      `Generated: ${new Date().toISOString().slice(0, 10)}`,
     ].join('\n'),
   )
 }
@@ -531,19 +534,19 @@ function buildAttribution() {
 function updateSkillIndex({ pages, reference, tunes, drums, sounds }) {
   const file = path.join(OUT, 'SKILL.md')
   if (!fs.existsSync(file)) {
-    console.warn('[skill] SKILL.md 不存在，跳过索引刷新（先手写 SKILL.md 并放入 generated 标记）')
+    console.warn('[skill] no SKILL.md, skipping the index refresh (write SKILL.md by hand first and add the generated markers)')
     return
   }
-  const lines = ['## 文件索引（自动生成）', '', '### 教程与专题（workshop 按顺序读；learn 按主题查）', '']
-  for (const p of pages) lines.push(`- \`${p.file}\` — ${p.title}${p.summary ? `：${p.summary}` : ''}`)
-  lines.push('', '### 函数参考（reference/，先读 reference/index.md 或用 search_docs 搜函数名）', '')
-  for (const [f, names] of reference.namesByFile) lines.push(`- \`${f}\`（${names.length} 项）：${names.join(', ')}`)
+  const lines = ['## File index (generated)', '', '### Tutorials and topics (read workshop in order; look up learn by topic)', '']
+  for (const p of pages) lines.push(`- \`${p.file}\` — ${p.title}${p.summary ? `: ${p.summary}` : ''}`)
+  lines.push('', '### Function reference (reference/; start with reference/index.md, or search a function name with search_docs)', '')
+  for (const [f, names] of reference.namesByFile) lines.push(`- \`${f}\` (${names.length} entries): ${names.join(', ')}`)
   lines.push(
-    `- \`reference/sounds.md\` — 本项目预加载的全部音色名：${sounds.banks} 个鼓机 bank 及各自的鼓件、默认鼓组、Dirt-Samples ${sounds.dirt} 组、VCSL ${sounds.vcsl} 组、中国传统乐器 ${sounds.local} 组、GM soundfont ${sounds.gm} 个（不确定某个音色名是否存在时查这里，heading 可用 "Drum machines" / "Dirt-Samples" / "Chinese traditional" / "GM soundfonts" 等）`,
+    `- \`reference/sounds.md\` — every sound name this project preloads: ${sounds.banks} drum-machine banks with their drums, the default kit, ${sounds.dirt} Dirt-Samples groups, ${sounds.vcsl} VCSL groups, ${sounds.local} traditional Chinese groups and ${sounds.gm} GM soundfonts (check here whenever you are unsure a sound name exists; useful headings are "Drum machines" / "Dirt-Samples" / "Chinese traditional" / "GM soundfonts")`,
   )
-  lines.push('', `### 示例曲（examples/tunes.md，${tunes.length} 首，heading = 曲名）`, '')
-  lines.push(tunes.map((t) => `${t.name}${t.summary ? `（${t.summary}）` : ''}`).join('；'))
-  lines.push('', `### 鼓型库（examples/drums/<genre>.md，共 ${drums.reduce((n, g) => n + g.count, 0)} 个，索引见 examples/drums/index.md）`, '')
+  lines.push('', `### Example tunes (examples/tunes.md, ${tunes.length} of them, heading = tune name)`, '')
+  lines.push(tunes.map((t) => `${t.name}${t.summary ? ` (${t.summary})` : ''}`).join('; '))
+  lines.push('', `### Drum pattern library (examples/drums/<genre>.md, ${drums.reduce((n, g) => n + g.count, 0)} in total, indexed in examples/drums/index.md)`, '')
   lines.push(drums.map((g) => `${path.basename(g.file, '.md')}(${g.count})`).join(', '))
   const generated = lines.join('\n')
   const src = fs.readFileSync(file, 'utf8')
@@ -551,7 +554,7 @@ function updateSkillIndex({ pages, reference, tunes, drums, sounds }) {
   const end = '<!-- generated:end -->'
   const a = src.indexOf(start)
   const b = src.indexOf(end)
-  if (a < 0 || b < 0) throw new Error('SKILL.md 缺少 generated 标记')
+  if (a < 0 || b < 0) throw new Error('SKILL.md is missing the generated markers')
   fs.writeFileSync(file, `${src.slice(0, a + start.length)}\n${generated}\n${src.slice(b)}`)
 }
 
@@ -561,7 +564,7 @@ const warnings = []
 const warn = (m) => warnings.push(m)
 const docs = ensureSource()
 const docsByName = new Map(docs.map((d) => [d.longname, d]).concat(docs.map((d) => [d.name, d])))
-// 清理旧的生成物（SKILL.md 保留）
+// Clear the previous output (SKILL.md is kept)
 for (const sub of ['workshop', 'learn', 'recipes', 'understand', 'functions', 'reference', 'examples']) {
   fs.rmSync(path.join(OUT, sub), { recursive: true, force: true })
 }

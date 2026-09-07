@@ -8,9 +8,9 @@ import { stream as streamOpenAIResponses } from '@earendil-works/pi-ai/api/opena
 import { type AgentModel, createAnthropicModel, createOpenAIModel, guessOpenAIReasoning } from '@/lib/agent-model'
 
 /**
- * 服务端 LLM 配置：从环境变量决定协议、模型、baseUrl 和 Key。
+ * Server-side LLM configuration: protocol, model, baseUrl and key, all from the environment.
  *
- *   LLM_PROVIDER=anthropic | openai            默认 anthropic
+ *   LLM_PROVIDER=anthropic | openai            defaults to anthropic
  *   ANTHROPIC_API_KEY / ANTHROPIC_BASE_URL / ANTHROPIC_MODEL
  *   OPENAI_API_KEY / OPENAI_BASE_URL / OPENAI_MODEL / OPENAI_API=completions|responses / OPENAI_REASONING=auto|true|false
  */
@@ -28,7 +28,7 @@ export interface StreamRequest {
 export interface LlmConfig {
   provider: 'anthropic' | 'openai'
   model: AgentModel
-  /** 缺什么配置；为空表示可用 */
+  /** Which configuration is missing; empty means it is usable */
   missing?: string
   stream: (req: StreamRequest) => AssistantMessageEventStream
 }
@@ -61,7 +61,7 @@ export function getLlmConfig(): LlmConfig {
       model,
       missing: apiKey ? undefined : 'OPENAI_API_KEY',
       stream: ({ context, effort, maxTokens, signal }) => {
-        // 本地 / 第三方兼容服务往往不支持 xhigh、max，收敛到 high
+        // Local and third-party compatible services often do not support xhigh or max, so clamp to high
         const reasoningEffort = model.reasoning ? (effort === 'xhigh' || effort === 'max' ? 'high' : effort) : undefined
         const options = { apiKey: apiKey ?? '', maxTokens, reasoningEffort, signal }
         return model.api === 'openai-responses'

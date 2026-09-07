@@ -1,56 +1,56 @@
-# Bass 与声部安排
+# Bass and voice leading
 
-规则一句话：**bass 走根音、跟着 kick；各声部分音区；同一时刻在动的声部不超过 3 个。**
+The rule in one line: **the bass follows the roots and the kick; each voice takes its own register; no more than three voices move at once.**
 
-## Bass 的三个层次
+## Three levels of bass
 
-1. **根音长音**（最安全）：
+1. **Held roots** (the safest):
    ```js
    $: chord(prog).rootNotes(2).note().s("gm_acoustic_bass").clip(.95)
    ```
-2. **根音节奏化**（大多数曲风）：让 bass 跟 kick 的位置走。
+2. **Rhythmized roots** (most genres): follow the kick's placement.
    ```js
    $: chord(prog).rootNotes(2).note().struct("x ~ x ~ ~ x ~ x").s("sawtooth").lpf(400)
-   $: chord(prog).rootNotes(2).note().ply("<2 4>").s("gm_synth_bass_1").clip(.5)   // 八分 / 十六分律动
+   $: chord(prog).rootNotes(2).note().ply("<2 4>").s("gm_synth_bass_1").clip(.5)   // an eighth- or sixteenth-note groove
    ```
-3. **根音 + 五音 / 八度 / 经过音**（有旋律感的 bass）：用度数写，五音是 +4，八度是 +7，进入下一个和弦前用经过音。
+3. **Root plus fifth / octave / passing tones** (a melodic bass): write it as degrees, where the fifth is +4 and the octave +7, and use a passing tone before the next chord.
    ```js
-   // 以度数写：每小节根音度数是 0 5 3 4（对应 C Am F G），在此基础上加 0 / 4 / 7
+   // As degrees: the root degree of each bar is 0 5 3 4 (for C Am F G), with 0 / 4 / 7 added on top
    $: n("<0 5 3 4>".add("0 ~ 4 7 0 ~ 4 [7 6]")).scale("C2:major").s("gm_electric_bass_finger").clip(.8)
    ```
-   注意最后一格的 `6` 是走向下一小节根音的经过音，放在小节最后一个弱拍。
+   Note that the `6` in the last slot is a passing tone leading to the next bar's root, placed on the bar's final weak beat.
 
-- 和弦切换的那一拍（通常是小节第一拍）**必须**弹根音，中间怎么走都行。
-- bass 音区：`rootNotes(2)` 或 `scale("C2:...")`，即 C2–C3 附近。再低听不清，再高会撞和弦。
-- bass 一次只有一个音，不要叠和弦。`.lpf(300–600)` 去掉高频毛刺，electronic bass 用 `sawtooth` / `square` 加 `lpf` + `lpenv`。
+- The beat where the chord changes (usually the first of the bar) **must** play the root; anything goes in between.
+- Bass register: `rootNotes(2)` or `scale("C2:...")`, so around C2–C3. Lower is inaudible, higher collides with the chords.
+- The bass plays one note at a time — never stack chords on it. `.lpf(300–600)` removes the high-frequency fuzz, and an electronic bass wants `sawtooth` / `square` with `lpf` plus `lpenv`.
 
-## Bass 和 kick 的关系
+## The bass against the kick
 
-- 同步：bass 的 `struct` 和 kick 的 pattern 用同一个节奏字符串，或让 bass 只在 kick 上。
-- 错开（funk / house）：kick 在正拍，bass 在反拍或十六分后半，`"~ x ~ x"` 之类，但小节第一拍仍要有一个（bass 或 kick 至少一个）。
-- 不要让 bass 和 kick 都在密集的十六分上同时动，低频会糊，二选一密、另一个疏。
+- In sync: use the same rhythm string for the bass's `struct` and the kick's pattern, or put the bass only where the kick is.
+- Offset (funk / house): the kick on the beat, the bass off the beat or on the second half of a sixteenth, something like `"~ x ~ x"` — but the first beat of the bar still needs one of the two (bass or kick).
+- Never let the bass and the kick both run dense sixteenths at once; the low end turns to mud. Pick one to be dense and keep the other sparse.
 
-## 音区分配
+## Register assignment
 
-| 声部 | 八度 | Strudel |
+| Voice | Octave | Strudel |
 |---|---|---|
-| kick / bass | 1–2 | `rootNotes(2)`、`scale("C2:…")` |
-| 和弦 / pad | 3–4 | `voicing()` 默认；`.anchor("c5").mode("below")` 压低 |
-| 旋律 / lead | 4–5 | `scale("C4:…")` 或 `.add(note(12))` |
-| 装饰 / 琶音 / hh | 5–6 | `.add(note(24))` |
+| kick / bass | 1–2 | `rootNotes(2)`, `scale("C2:…")` |
+| chords / pad | 3–4 | the `voicing()` default; `.anchor("c5").mode("below")` to push it down |
+| melody / lead | 4–5 | `scale("C4:…")` or `.add(note(12))` |
+| ornaments / arpeggio / hats | 5–6 | `.add(note(24))` |
 
-- 两个声部不要在同一八度同时动：旋律 4–5，则和弦压在 3–4 或做成琶音靠高一点（5–6）。
-- pad 和 lead 用不同音色类型（一个 pad / 弦乐 / epiano，一个 pluck / lead / piano），否则听不出谁是谁。
+- Two voices should not move in the same octave at the same time: with the melody at 4–5, keep the chords down at 3–4, or turn them into an arpeggio placed higher (5–6).
+- Give the pad and the lead different kinds of sound (one a pad / strings / epiano, the other a pluck / lead / piano), or they blur into each other.
 
-## 声部连接（voice leading）
+## Voice leading
 
-- `.voicing()` 已经自动选择离上一个和弦最近的配置，平滑连接，正常情况不用管。
-- 自己用 `note("[c,e,g]")` 手写和弦时，相邻和弦尽量只动一两个音：C `[c,e,g]` → Am `[c,e,a]` → F `[c,f,a]` → G `[b,d,g]`，而不是每个都从根音堆起来。
-- 旋律和 bass 不要长时间平行（同方向同度数），偶尔反向（旋律上行时 bass 下行）会更好听。
+- `.voicing()` already picks the voicing closest to the previous chord and connects them smoothly, so normally there is nothing to do.
+- Writing chords by hand with `note("[c,e,g]")`, move only one or two notes between adjacent chords: C `[c,e,g]` -> Am `[c,e,a]` -> F `[c,f,a]` -> G `[b,d,g]`, rather than stacking each one up from its root.
+- Do not let the melody and the bass run parallel for long (same direction, same intervals); moving in contrary motion now and then (melody up, bass down) sounds better.
 
-## 密度控制
+## Density control
 
-- 一个时刻最多 3 个"在动"的声部（鼓算一个，pad 长音不算）。
-- 一个声部密（十六分 hh 或琶音），其他声部就要疏（长音、每拍一次）。
-- 最容易犯的错是 hh、琶音、旋律三个都是十六分：留一个。
-- 副歌加声部，主歌减声部，intro 只留一两个。见 `music-theory/arrangement.md`。
+- At most three voices "moving" at any moment (drums count as one; a held pad does not).
+- When one voice is dense (sixteenth hats or an arpeggio), the others must be sparse (long notes, one per beat).
+- The easiest mistake is hats, arpeggio and melody all running sixteenths: keep one.
+- Add voices for the chorus, remove them for the verse, leave one or two in the intro. See `music-theory/arrangement.md`.

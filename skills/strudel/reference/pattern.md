@@ -1,8 +1,8 @@
 # Pattern functions
 
-Pattern 变换函数：时间、结构、条件、叠加、随机、数值运算等。大多数既是 `Pattern` 方法，也可以作为独立函数调用。
+Pattern transformations: time, structure, conditionals, layering, randomness, arithmetic and more. Most are both `Pattern` methods and standalone functions.
 
-共 151 项。每项：名称、同义名、说明、参数、示例。
+151 entries. Each one lists name, synonyms, description, parameters and examples.
 
 ## Time
 

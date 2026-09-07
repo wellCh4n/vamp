@@ -5,8 +5,9 @@ import { useEffect, useSyncExternalStore } from 'react'
 import type { ProjectDto, SessionDto } from '@/lib/api'
 
 /**
- * 侧边栏工程树的全局 store。
- * 任何地方改了工程 / 会话后调用 refreshTree()，所有订阅者（侧边栏）会重新拉取。
+ * Global store for the sidebar's project tree.
+ * Call refreshTree() after changing a project or session anywhere, and every subscriber (the
+ * sidebar) refetches.
  */
 
 export interface ProjectNode extends ProjectDto {

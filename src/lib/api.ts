@@ -1,6 +1,6 @@
 import type { AgentMessage } from '@earendil-works/pi-agent-core'
 
-/** 浏览器端调用后端 API 的薄封装（服务端类型见 src/db/schema.ts，这里用序列化后的形状） */
+/** Thin browser-side wrapper over the backend API (server types live in src/db/schema.ts; these are the serialized shapes) */
 
 export interface ProjectDto {
   id: string

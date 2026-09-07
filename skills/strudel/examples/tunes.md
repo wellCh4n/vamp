@@ -1,7 +1,7 @@
 # Example tunes
 
-Strudel 官方 REPL 自带的 32 首示例曲（AGPL-3.0，Strudel contributors，部分曲子注释里有作者署名）。
-每首一个二级标题，可用 read_doc 带 heading 只读一首。适合作为编曲结构、音色搭配、和声写法的参考。
+The 32 example tunes shipped with the official Strudel REPL (AGPL-3.0, Strudel contributors; some tunes credit their author in a comment).
+One level-two heading per tune, so read_doc with a heading returns just one. A good reference for arrangement structure, sound choices and harmony.
 
 ## swimming
 

@@ -1,8 +1,8 @@
 # Signals & randomness
 
-连续信号（sine、saw、perlin…）和随机函数（rand、choose、degradeBy、sometimes…）。信号取值发生在事件触发时，要连续变化需配合 `segment`。
+Continuous signals (sine, saw, perlin, …) and random functions (rand, choose, degradeBy, sometimes, …). A signal is sampled when an event fires, so pair it with `segment` for continuous movement.
 
-共 62 项。每项：名称、同义名、说明、参数、示例。
+62 entries. Each one lists name, synonyms, description, parameters and examples.
 
 ## Signals
 

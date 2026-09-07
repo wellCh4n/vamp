@@ -118,7 +118,7 @@
 }
 
 @layer base {
-  /* 所有可交互控件统一手型光标（Tailwind v4 的 preflight 把 button 设成了 default） */
+  /* Pointer cursor on every interactive control (Tailwind v4's preflight sets button to default) */
   :where(button, [role='button'], [role='tab'], [role='radio'], [role='menuitem'], [role='option'], summary, select, a[href], label[for]):not(:disabled, [aria-disabled='true']) {
     cursor: pointer;
   }
@@ -137,7 +137,7 @@
     @apply font-sans;
   }
 }
-/* Strudel CodeMirror 编辑器 */
+/* Strudel CodeMirror editor */
 .cm-editor {
   height: 100%;
 }
@@ -147,7 +147,7 @@
   white-space: pre;
 }
 
-/* Agent 回复的 Markdown */
+/* Markdown in agent replies */
 .markdown > :first-child {
   margin-top: 0;
 }
@@ -235,7 +235,7 @@
   margin: 0.6em 0;
 }
 
-/* "正在输入…" 的动态省略号 */
+/* Animated ellipsis for the "typing…" indicator */
 .typing-dots::after {
   content: '…';
   display: inline-block;

@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   icons: { icon: '/favicon.svg' },
 }
 
-// 主题跟随系统：在 hydration 之前按系统偏好设置 .dark，避免闪白；之后由 ThemeSync 实时跟随
+// Follow the system theme: set .dark from the system preference before hydration to avoid a white flash; ThemeSync keeps it in sync afterwards
 const themeInit = `(function(){try{if(matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark')}catch(e){}})()`
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {

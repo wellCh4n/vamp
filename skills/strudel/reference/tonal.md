@@ -1,8 +1,8 @@
 # Tonal (scales, chords, voicings)
 
-来自 @strudel/tonal：音阶、和弦、voicing。
+From @strudel/tonal: scales, chords and voicings.
 
-共 7 项。每项：名称、同义名、说明、参数、示例。
+7 entries. Each one lists name, synonyms, description, parameters and examples.
 
 ## Other
 

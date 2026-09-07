@@ -26,40 +26,40 @@ import { cn } from '@/lib/utils'
 export type { ApplyResult }
 
 interface AgentChatProps {
-  /** 取当前编辑器代码 */
+  /** Read the current editor code */
   getCode: () => string
-  /** 把代码写入编辑器并播放，返回是否成功 */
+  /** Write code into the editor and play it; returns whether it succeeded */
   applyCode: (code: string, summary: string) => Promise<ApplyResult>
-  /** 会话已有的历史消息（切换会话时父组件用 key 重新挂载本组件） */
+  /** Existing history for this session (the parent remounts this component by key when the session changes) */
   initialMessages: AgentMessage[]
-  /** 第一次发消息前确保会话存在，返回会话 id */
+  /** Ensure the session exists before the first message; returns the session id */
   ensureSession: (firstText: string) => Promise<string>
-  /** 把一轮新产生的消息写入数据库 */
+  /** Persist the messages produced by one turn */
   persist: (sessionId: string, messages: AgentMessage[]) => Promise<void>
 }
 
 const SUGGESTIONS = ['来一段 120 BPM 的 house', '加一条贝斯线', '鼓更有 swing 感一点', '整体更空灵、加点混响']
 
-/** 发送消息后无条件滚到底部（autoScroll 只在本来就贴底时跟随，用户往上翻过或输入框变高后就不跟了） */
+/** Always scroll to the bottom after sending (autoScroll only follows when already pinned to the bottom, and stops once the user scrolls up or the composer grows) */
 function ScrollToEndOnSend({ signal }: { signal: number }) {
   const { scrollToEnd } = useMessageScroller()
   useEffect(() => {
     if (!signal) return
-    // 等新消息渲染进 DOM 再滚
+    // Wait for the new message to render into the DOM before scrolling
     const id = requestAnimationFrame(() => scrollToEnd({ behavior: 'smooth' }))
     return () => cancelAnimationFrame(id)
   }, [signal, scrollToEnd])
   return null
 }
 
-/** 订阅 pi Agent 的事件，让 React 跟着重渲染 */
+/** Subscribe to pi agent events so React re-renders along with them */
 function useAgentState(agent: Agent) {
   const [, setTick] = useState(0)
   useEffect(() => agent.subscribe(() => setTick((t) => t + 1)), [agent])
   return agent.state
 }
 
-/** 运行中的阶段，用来显示状态条 */
+/** The phase of a running turn, used to render the status line */
 type Phase =
   | { kind: 'connecting' }
   | { kind: 'thinking' }
@@ -89,7 +89,7 @@ function phaseLabel(phase: Phase, now: number) {
   }
 }
 
-/** 从 pi 事件推导当前阶段 */
+/** Derive the current phase from pi events */
 function usePhase(agent: Agent, onRetry: (listener: (info: { attempt: number; delayMs: number }) => void) => () => void) {
   const [phase, setPhase] = useState<Phase | null>(null)
   const [startedAt, setStartedAt] = useState<number | null>(null)
@@ -115,7 +115,7 @@ function usePhase(agent: Agent, onRetry: (listener: (info: { attempt: number; de
               setPhase({ kind: 'reading', what: docCallLabel(block.name, block.arguments) })
             } else {
               const code = block?.type === 'toolCall' ? (block.arguments as { code?: string })?.code : undefined
-              // 用已经写出的轨数（$: 开头的行）表示进度，比代码行数更贴近"在编曲"
+              // Report progress as the number of tracks written so far (lines starting with $:), which reads more like "arranging" than a line count
               setPhase({ kind: 'coding', tracks: code ? (code.match(/^\s*_?\$:/gm)?.length ?? 0) : 0 })
             }
           }
@@ -143,7 +143,7 @@ function usePhase(agent: Agent, onRetry: (listener: (info: { attempt: number; de
     }
   }, [agent, onRetry])
 
-  // 计时器：运行中每秒刷新一次（只依赖"是否在运行"，否则每个流式事件都会重建定时器）
+  // Timer: tick once a second while running (depending only on "is it running", otherwise every stream event would rebuild the interval)
   const running = phase !== null
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => {
@@ -152,7 +152,7 @@ function usePhase(agent: Agent, onRetry: (listener: (info: { attempt: number; de
     return () => clearInterval(timer)
   }, [running])
 
-  // 第一次 tick 之前 now 可能比 startedAt 旧，钳到 0
+  // Before the first tick, now can be older than startedAt, so clamp to 0
   return { phase, elapsed: startedAt ? Math.max(0, Math.floor((now - startedAt) / 1000)) : 0, now }
 }
 
@@ -164,7 +164,7 @@ interface ToolCallView {
   error?: string
 }
 
-/** read_doc / search_docs 调用的一句话描述（状态行和历史里都用） */
+/** One-line description of a read_doc / search_docs call (used in both the status line and the history) */
 function docCallLabel(name: string, args: unknown): string {
   const a = (args ?? {}) as { path?: string; heading?: string; query?: string }
   if (name === SEARCH_DOCS_TOOL) return a.query ? `搜索「${a.query}」` : '搜索资料'
@@ -172,7 +172,7 @@ function docCallLabel(name: string, args: unknown): string {
   return name
 }
 
-/** 一条用户消息，或一轮 Agent 的合并回答（同一轮里的多段文字合成一条，工具调用列在底部） */
+/** A user message, or one merged agent turn (text segments from the same turn are joined, tool calls listed underneath) */
 type ChatItem =
   | { key: number; kind: 'user'; text: string }
   | { key: number; kind: 'assistant'; text: string; thinking: string; toolCalls: ToolCallView[]; error?: string }
@@ -193,7 +193,7 @@ function textOf(content: ToolResultMessage['content']) {
 }
 
 export function AgentChat({ getCode, applyCode, initialMessages, ensureSession, persist }: AgentChatProps) {
-  // agent 只创建一次；回调身份会随父组件变化，通过 setHost 同步进去
+  // The agent is created once; callback identities change with the parent, so they are pushed in via setHost
   const [{ agent, setHost, onRetry }] = useState(() => createVibeAgent({ applyCode }, initialMessages))
   useEffect(() => {
     setHost({ applyCode })
@@ -210,7 +210,7 @@ export function AgentChat({ getCode, applyCode, initialMessages, ensureSession, 
   }, [persist])
   const busy = state.isStreaming || phase !== null
 
-  // 每轮结束后把新消息落库（被自动重试移除的报错消息不存）
+  // Persist new messages after each turn (error messages removed by an automatic retry are skipped)
   useEffect(
     () =>
       agent.subscribe((event) => {
@@ -224,8 +224,9 @@ export function AgentChat({ getCode, applyCode, initialMessages, ensureSession, 
     [agent],
   )
 
-  // 把 pi 的消息列表按"用户消息 → 一轮回答"分组：一轮里的多段 assistant 文字合并成一条，
-  // toolResult 合并到对应的 toolCall 上。运行中的那一轮不渲染内容，只显示状态行。
+  // Group pi's message list into "user message -> one reply turn": assistant text segments from a
+  // turn are merged into one, and each toolResult is folded into its toolCall. The in-flight turn
+  // renders no content, only the status line.
   const items = useMemo(() => {
     const messages: AgentMessage[] = [...state.messages]
     if (state.streamingMessage) messages.push(state.streamingMessage)
@@ -274,7 +275,7 @@ export function AgentChat({ getCode, applyCode, initialMessages, ensureSession, 
     return out
   }, [state.messages, state.streamingMessage])
 
-  // 运行中：最后一轮回答还没完成，用一行状态代替它
+  // While running the last turn is incomplete, so replace it with a single status line
   const inProgress = phase !== null
   const visibleItems = inProgress && items.length > 0 && items[items.length - 1].kind === 'assistant' ? items.slice(0, -1) : items
 
@@ -288,7 +289,7 @@ export function AgentChat({ getCode, applyCode, initialMessages, ensureSession, 
       setSentCount((n) => n + 1)
       const message: AgentMessage = { role: 'user', content: withCurrentCode(trimmed, getCode()), timestamp: Date.now() }
       if (agent.state.isStreaming) {
-        // 运行中：作为 steering 消息，在当前工具执行完后插入
+        // While running, queue it as a steering message inserted after the current tool finishes
         agent.steer(message)
         return
       }
@@ -311,7 +312,7 @@ export function AgentChat({ getCode, applyCode, initialMessages, ensureSession, 
       <MessageScrollerProvider autoScroll>
         <ScrollToEndOnSend signal={sentCount} />
         <MessageScroller className="min-h-0 flex-1">
-          {/* 内边距放在滚动内容里而不是外层：滚动时文字要能贴到面板边缘，只有滚到头才有留白 */}
+          {/* Padding lives inside the scrolled content rather than around it: text should reach the panel edge while scrolling, with whitespace only at the ends */}
           <MessageScrollerViewport className="pr-3 pl-4">
             <MessageScrollerContent className="gap-3 pt-4 pb-7">
               {items.length === 0 && (
@@ -395,7 +396,7 @@ export function AgentChat({ getCode, applyCode, initialMessages, ensureSession, 
               {phase && (
                 <MessageScrollerItem>
                   <p className="typing flex items-center gap-1 px-1 text-sm text-muted-foreground" role="status" aria-live="polite">
-                    {/* shimmer 是 shadcn/tailwind.css 自带的流光文字效果（background-clip: text），只加在文字上，省略号单独画 */}
+                    {/* shimmer is the shadcn/tailwind.css text-shimmer effect (background-clip: text); apply it to the text only and draw the ellipsis separately */}
                     <span className="shimmer">{phaseLabel(phase, now)}</span>
                     <span className="typing-dots" aria-hidden="true" />
                     {elapsed >= 5 && <span className="ml-1 text-xs tabular-nums opacity-70">{elapsed}s</span>}
@@ -425,7 +426,7 @@ export function AgentChat({ getCode, applyCode, initialMessages, ensureSession, 
           void send(input)
         }}
       >
-        {/* ChatGPT 式输入框：按钮放在框内右下角，聚焦环打在整个容器上 */}
+        {/* ChatGPT-style composer: buttons sit in the bottom-right corner inside the box, and the focus ring wraps the whole container */}
         <div className="flex flex-col rounded-2xl border border-input bg-background transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 dark:bg-input/30">
           <Textarea
             value={input}

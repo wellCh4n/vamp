@@ -1,10 +1,10 @@
 # Drum pattern index
 
-来源：Strudel 官方 REPL 的 drum_patterns.mjs，原始数据来自 https://github.com/lvm/tidal-drum-patterns （GPL-3.0），用 https://github.com/urswilke/read_beats 转换。
+Source: drum_patterns.mjs from the official Strudel REPL. The underlying data comes from https://github.com/lvm/tidal-drum-patterns (GPL-3.0), converted with https://github.com/urswilke/read_beats.
 
-按曲风分文件，每个文件里每个鼓型一个二级标题。鼓型都是 `stack("...", "...").s().slow(2)` 的形式：每行一个鼓件，`[x ~ ~ ~]` 一组是一拍（16 分音符），4 组一小节，`slow(2)` 把两小节摊到两个 cycle。
+One file per genre, with a level-two heading per pattern. Every pattern has the shape `stack("...", "...").s().slow(2)`: one line per drum, each `[x ~ ~ ~]` group is one beat (sixteenth notes), four groups make a bar, and `slow(2)` spreads two bars over two cycles.
 
-用法：把 `.s()` 里加上 `.bank("RolandTR909")` 换音色；把某一行拿出来单独用 `$: s("...")`。
+Usage: add `.bank("RolandTR909")` after `.s()` to change the kit, or lift a single line out on its own with `$: s("...")`.
 
 - [Afro](examples/drums/afro.md) (18): Afro1a, Afro1b, Afro1c, Afro2a, Afro2b, Afro2c, Afro3a, Afro3b, Afro3c, Afro4a, Afro4b, Afro4c, Afro5a, Afro5b, Afro5c, Afro6a, Afro6b, Afro6c
 - [Ageispolis](examples/drums/ageispolis.md) (1): Ageispolis

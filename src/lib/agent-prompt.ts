@@ -1,8 +1,10 @@
 import { READ_DOC_TOOL, SEARCH_DOCS_TOOL, SET_CODE_TOOL } from '@/lib/agent-model'
 
 /**
- * 系统提示 = AGENT_INSTRUCTIONS + 每个 skill 的 SKILL.md（strudel 在前，其后 music-theory 等；见 src/lib/skill.ts）。
- * SKILL.md 是速查和资料索引；更细的语法、函数参考、示例曲、鼓型由模型用 read_doc / search_docs 按需读取。
+ * System prompt = AGENT_INSTRUCTIONS + the SKILL.md of every skill (strudel first, then
+ * music-theory and the rest; see src/lib/skill.ts).
+ * SKILL.md is a cheatsheet plus a doc index; finer syntax, function reference, example tunes and
+ * drum patterns are pulled in on demand by the model through read_doc / search_docs.
  */
 
 export const AGENT_INSTRUCTIONS = `你是 Vamp 里的音乐搭档，用 Strudel（Tidal Cycles 的 JavaScript 移植）在浏览器里写 live coding 音乐。

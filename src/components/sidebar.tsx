@@ -13,7 +13,7 @@ import { api, type SessionDto } from '@/lib/api'
 import { type ProjectNode, refreshTree, useTree } from '@/lib/tree-store'
 import { cn } from '@/lib/utils'
 
-/** 从路径里解析当前工程 / 会话：/p/<id> 或 /p/<id>/s/<sid> */
+/** Parse the current project / session out of the path: /p/<id> or /p/<id>/s/<sid> */
 function parsePath(pathname: string) {
   const m = pathname.match(/^\/p\/([^/]+)(?:\/s\/([^/]+))?/)
   return { projectId: m?.[1] ?? null, sessionId: m?.[2] ?? null }
@@ -186,7 +186,7 @@ export function Sidebar() {
         {projects?.length === 0 && <p className="px-2 py-1 text-xs text-muted-foreground">还没有工程，先新建一个。</p>}
         <ul className="flex flex-col gap-0.5">
           {projects?.map((p) => {
-            // 没有手动开合过的工程：当前工程默认展开，其余收起
+            // Projects the user has not toggled: the current one starts expanded, the rest collapsed
             const open = expanded[p.id] ?? p.id === activeProject
             const isActiveProject = activeProject === p.id
             return (
@@ -235,7 +235,7 @@ export function Sidebar() {
                         <li
                           key={s.id}
                           className={cn(
-                            // 整行是一个高亮块，删除按钮也在块内
+                            // The whole row is one highlight block, delete button included
                             'group/session flex h-8 items-center gap-1 rounded-md pr-1 hover:bg-sidebar-accent',
                             isActive && 'bg-sidebar-accent font-medium',
                           )}

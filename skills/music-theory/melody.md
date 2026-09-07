@@ -1,68 +1,69 @@
-# 旋律写法
+# Writing melody
 
-规则一句话：**和弦音搭骨架，级进为主，2 / 4 小节一句，句尾落回主音或五音，A A B A' 做问答。**
+The rule in one line: **build the skeleton from chord tones, move mostly by step, phrase in 2 or 4 bars, end phrases back on the tonic or the fifth, and shape it as a call and response of A A B A'.**
 
-## 写法模板
+## A template
 
 ```js
 const key = "C:major"
 const prog = "<C Am F G>"
-// 四小节一句，每小节 4 拍；每小节第一个音是该小节和弦的和弦音（C:0 2 4 / Am:5 0 2 / F:3 5 0 / G:4 6 1）
+// A four-bar phrase, four beats per bar; the first note of each bar is a chord tone of that bar's chord
+// (C: 0 2 4 / Am: 5 0 2 / F: 3 5 0 / G: 4 6 1)
 $: n("<[0 2 4 2] [5 4 2 0] [3 5 3 2] [4 2 1 0]>").scale(key).add(note(12)).s("piano").clip(.9)
 ```
 
-检查：第 1 小节开头 0（C 的根音）；第 2 小节开头 5（Am 的根音）；第 3 小节 3（F 的根音）；第 4 小节 4（G 的根音），句尾 0 回到主音。
+Check it: bar 1 opens on 0 (the root of C), bar 2 on 5 (the root of Am), bar 3 on 3 (the root of F), bar 4 on 4 (the root of G), and the phrase ends on 0, back at the tonic.
 
-## 五条规则
+## Five rules
 
-1. **强拍和弦音**：每小节第一个音、每拍第一个音落在当前和弦的根 / 三 / 五音上（度数表见 `music-theory/chords-and-progressions.md`）。弱拍可以用任何调内音当经过音、邻音。
-2. **级进为主，跳进要回**：相邻音以走一两个度数为主；跳了 3 度以上（比如 0 → 4），下一个音反向级进回来（4 → 3 或 4 → 2）。连续大跳听起来像随机。
-3. **乐句长度**：2 小节短句或 4 小节长句，句和句之间留一拍以上的休止（`~`）或长音，让人喘气。
-4. **句尾**：段落最后一句结束在度数 0（主音，最稳）或 4（五音，半终止，想继续）。中间句可以停在 1 或 2（不稳定，推动往下）。
-5. **重复与变化**：最有效的结构是 A A B A'。A 重复一次让人记住，B 换个起点（高一点或换节奏），A' 是 A 结尾稍改。用 `<>` 写：
+1. **Chord tones on strong beats**: the first note of each bar and of each beat lands on the root, third or fifth of the current chord (the degree table is in `music-theory/chords-and-progressions.md`). Weak beats can use any note in the key as a passing or neighbor tone.
+2. **Mostly stepwise, and reverse after a leap**: adjacent notes should mostly move one or two degrees; after a leap of a third or more (0 -> 4, say), step back in the opposite direction (4 -> 3 or 4 -> 2). Consecutive leaps sound random.
+3. **Phrase length**: short phrases of 2 bars or long ones of 4, with at least a beat of rest (`~`) or a held note between them so the line can breathe.
+4. **Phrase endings**: the last phrase of a section ends on degree 0 (the tonic, the most settled) or 4 (the fifth, a half cadence that wants to continue). Interior phrases may stop on 1 or 2 — unstable, and pushing onward.
+5. **Repetition and variation**: the most effective shape is A A B A'. Repeating A once makes it memorable, B starts somewhere else (higher, or with a different rhythm), and A' is A with a modified ending. Write it with `<>`:
    ```js
    $: n("<[0 2 4 2] [0 2 4 2] [5 7 5 4] [0 2 4 0]>").scale(key)
    ```
 
-## 节奏比音高更重要
+## Rhythm matters more than pitch
 
-同样的度数，节奏不同就是不同的旋律。给旋律一个明确的节奏型再填音：
+The same degrees with a different rhythm are a different melody. Give the melody a definite rhythm first, then fill in the notes:
 
 ```js
-// 先定节奏（x 是音，~ 是休止），再决定 x 上放什么度数
-$: n("0 ~ 2 4 ~ 2 0 ~").scale(key)         // 八分音符，带切分
-$: n("0 [2 4] ~ 2").scale(key)              // 一拍两个音的短句
-$: n("[0 2 4 5]*2 [4 2] 0@2").scale(key)   // 快速上行后停住
+// Fix the rhythm first (x is a note, ~ a rest), then decide which degree goes on each x
+$: n("0 ~ 2 4 ~ 2 0 ~").scale(key)         // eighth notes with syncopation
+$: n("0 [2 4] ~ 2").scale(key)              // a short phrase with two notes on one beat
+$: n("[0 2 4 5]*2 [4 2] 0@2").scale(key)   // a fast run upward that then settles
 ```
 
-- 长音和休止是旋律的一部分：`0@2`、`~` 用起来。
-- 弱拍起（`~ 0 2 4`）比强拍起更有推动感。
-- 每句用同一个节奏型，只改音高，是最省力的"统一感"。
+- Held notes and rests are part of the melody: use `0@2` and `~`.
+- Starting on a weak beat (`~ 0 2 4`) pushes harder than starting on a strong one.
+- Reusing one rhythm across phrases and changing only the pitches is the cheapest way to sound coherent.
 
-## 动机发展（让旋律不是随机音）
+## Motif development (so the melody is not random notes)
 
-取一个 2–4 个音的动机，然后：
+Take a motif of two to four notes, then:
 
-| 手法 | Strudel |
+| Technique | Strudel |
 |---|---|
-| 原样重复 | `"<A A>"` |
-| 移位（在调内上移 / 下移） | `"0 2 4".add("<0 2 -3>")` 度数加减 |
-| 倒影（上行变下行） | 手写 `"0 2 4"` → `"0 -2 -4"` |
-| 拉长 / 压缩节奏 | `.slow(2)` / `.fast(2)` 或 `.ply(2)` |
-| 加尾音 | `"<[0 2 4] [0 2 4 7]>"` |
-| 换句尾 | `"<[0 2 4 2] [0 2 4 0]>"` |
+| repeat as is | `"<A A>"` |
+| sequence it (up or down within the key) | `"0 2 4".add("<0 2 -3>")`, adding to the degrees |
+| invert it (ascending becomes descending) | write it out: `"0 2 4"` -> `"0 -2 -4"` |
+| augment / diminish the rhythm | `.slow(2)` / `.fast(2)`, or `.ply(2)` |
+| extend the tail | `"<[0 2 4] [0 2 4 7]>"` |
+| change the ending | `"<[0 2 4 2] [0 2 4 0]>"` |
 
-## 音区与音色
+## Register and timbre
 
-- 旋律在 4–5 八度：`.scale("C4:major")` 或 `.add(note(12))`。
-- 音域别超过一个八度半，否则像在乱跑。
-- 旋律声部用 `clip(.8–.95)` 留一点空隙，用 `room` / `delay` 但别太湿。
-- 想要"人声感"或"歌唱性"：慢一点，级进多一点，长音多一点，`gm_flute` / `gm_voice_oohs` / `gm_lead_6_voice` 这类音色。
+- Melody sits at octaves 4–5: `.scale("C4:major")` or `.add(note(12))`.
+- Keep the range within about an octave and a half, or the line sounds like it is wandering.
+- Give the melody voice `clip(.8–.95)` for a little space, and use `room` / `delay` without going too wet.
+- For a vocal, singing quality: slower, more stepwise motion, more held notes, and sounds like `gm_flute` / `gm_voice_oohs` / `gm_lead_6_voice`.
 
-## 常见错误
+## Common mistakes
 
-- 每个音随机跳：大跳连续出现 → 改成级进 + 偶尔一个跳。
-- 一直在十六分上跑没休止 → 每两小节留一拍 `~`。
-- 旋律和和弦各走各的 → 强拍对照和弦音表。
-- 句子永远停在不稳定音上 → 段尾放 0 或 4。
-- 只有一个小节的旋律死循环 → 至少 4 小节，A A B A'。
+- Every note leaping at random: consecutive leaps — change to stepwise motion with the occasional leap.
+- Running sixteenths without a rest: leave a beat of `~` every two bars.
+- Melody and chords going their own ways: check the strong beats against the chord-tone table.
+- Phrases always stopping on an unstable note: end sections on 0 or 4.
+- One bar of melody looping forever: write at least four, as A A B A'.

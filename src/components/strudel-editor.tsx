@@ -31,7 +31,7 @@ interface StrudelEditorProps {
   initialCode: string
   dark: boolean
   className?: string
-  /** 编辑器为空时的提示文字 */
+  /** Placeholder shown while the editor is empty */
   placeholder?: string
   onChange?: (code: string) => void
   onEvaluate?: () => void
@@ -40,7 +40,7 @@ interface StrudelEditorProps {
 
 const themeCompartment = new Compartment()
 
-// 让编辑器背景透明、字体跟随页面，其余配色用 Strudel 自带的 GitHub 主题
+// Make the editor background transparent and inherit the page font; keep Strudel's own GitHub theme for the rest
 const chrome = EditorView.theme({
   '&': { backgroundColor: 'transparent', height: '100%', fontSize: '14px' },
   '&.cm-focused': { outline: 'none' },
@@ -48,7 +48,7 @@ const chrome = EditorView.theme({
     fontFamily: 'var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)',
     lineHeight: '1.6',
   },
-  // 左右留白对齐对话面板的 16px：行号从 8px 起，代码与右边缘各留 16px
+  // Match the chat panel's 16px gutters: line numbers start at 8px, with 16px before the code and at the right edge
   '.cm-gutters': { backgroundColor: 'transparent', border: 'none', color: 'var(--muted-foreground)', paddingLeft: '8px' },
   '.cm-content': { padding: '12px 0' },
   '.cm-line': { padding: '0 16px 0 8px' },
@@ -64,7 +64,7 @@ export const StrudelEditor = forwardRef<StrudelEditorHandle, StrudelEditorProps>
 ) {
   const rootRef = useRef<HTMLDivElement>(null)
   const viewRef = useRef<EditorView | null>(null)
-  // 用 ref 保存回调，避免每次父组件渲染都重建编辑器
+  // Keep callbacks in a ref so the editor is not rebuilt on every parent render
   const callbacks = useRef({ onChange, onEvaluate, onStop })
   useEffect(() => {
     callbacks.current = { onChange, onEvaluate, onStop }
@@ -116,7 +116,7 @@ export const StrudelEditor = forwardRef<StrudelEditorHandle, StrudelEditorProps>
       view.destroy()
       viewRef.current = null
     }
-    // initialCode 只在首次挂载时使用；后续通过 ref.setCode 更新
+    // initialCode is only used on the first mount; later updates go through ref.setCode
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

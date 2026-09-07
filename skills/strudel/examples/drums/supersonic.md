@@ -1,8 +1,8 @@
 # Supersonic drum patterns
 
-来源：Strudel 官方 REPL 的 drum_patterns.mjs，原始数据来自 https://github.com/lvm/tidal-drum-patterns （GPL-3.0），用 https://github.com/urswilke/read_beats 转换。
+Source: drum_patterns.mjs from the official Strudel REPL. The underlying data comes from https://github.com/lvm/tidal-drum-patterns (GPL-3.0), converted with https://github.com/urswilke/read_beats.
 
-4 个鼓型。
+4 patterns.
 
 ## Supersonic1a
 

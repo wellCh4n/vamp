@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from 'react'
 
-/** 主题跟随系统：订阅 prefers-color-scheme，不再提供手动切换和本地存储 */
+/** Theme follows the system: subscribe to prefers-color-scheme; there is no manual toggle or local storage */
 
 const QUERY = '(prefers-color-scheme: dark)'
 
@@ -20,7 +20,7 @@ function getServerSnapshot() {
   return false
 }
 
-/** 当前系统是否为深色（服务端渲染时为 false，客户端 hydration 后立即纠正） */
+/** Whether the system is currently dark (false during server rendering, corrected right after hydration) */
 export function useSystemDark() {
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 }

@@ -4,8 +4,9 @@ import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 
 /**
- * 播放是工程级别的：路由离开正在播放的工程（去别的工程或首页）时停止播放。
- * Strudel 模块只能在浏览器加载，所以这里用动态 import（本组件会在服务端渲染）。
+ * Playback is per project: stop it when the route leaves the project that is playing (for another
+ * project or the home page).
+ * Strudel modules can only load in the browser, hence the dynamic import (this component is server-rendered).
  */
 export function PlaybackGuard() {
   const pathname = usePathname()

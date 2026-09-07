@@ -11,7 +11,7 @@ interface MarkdownProps {
   className?: string
 }
 
-/** Agent 回复用的 Markdown 渲染（不渲染原始 HTML，链接新窗口打开） */
+/** Markdown renderer for agent replies (raw HTML is not rendered; links open in a new tab) */
 export const Markdown = memo(function Markdown({ children, className }: MarkdownProps) {
   return (
     <div className={cn('markdown', className)}>

@@ -13,7 +13,7 @@ interface ExportDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   code: string
-  /** 默认文件名（工程名） */
+  /** Default file name (the project name) */
   name: string
 }
 
@@ -22,7 +22,7 @@ const MAX_CYCLES = 256
 
 type Status = { kind: 'idle' } | { kind: 'rendering' } | { kind: 'done'; seconds: number; warnings: string[] } | { kind: 'error'; message: string }
 
-/** 导出 WAV：离线渲染指定 cycle 区间，完成后浏览器直接下载 */
+/** Export WAV: render the given cycle range offline, then let the browser download it */
 export function ExportDialog({ open, onOpenChange, code, name }: ExportDialogProps) {
   const [begin, setBegin] = useState('0')
   const [cycles, setCycles] = useState('16')

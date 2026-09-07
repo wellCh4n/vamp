@@ -7,13 +7,15 @@ import { getSkillPrompt } from '@/lib/skill'
 import { type Effort, EFFORTS, getLlmConfig } from '@/lib/llm-config'
 
 /**
- * pi-agent-core `streamProxy` 的服务端。
+ * Server side of pi-agent-core's `streamProxy`.
  *
- * 浏览器里的 Agent 把每次 LLM 调用 POST 到这里（{ model, context, options }），
- * 这里持有 API Key，按环境变量选择 Anthropic 或 OpenAI 协议（见 llm-config.ts）调模型，
- * 再把事件按 streamProxy 的 SSE 协议回传。服务端无状态：对话历史在浏览器，工具也在浏览器执行。
+ * The agent running in the browser POSTs every LLM call here ({ model, context, options }).
+ * This route holds the API key, picks the Anthropic or OpenAI protocol from the environment
+ * (see llm-config.ts), calls the model, and streams the events back over streamProxy's SSE
+ * protocol. The server is stateless: conversation history lives in the browser, and so does
+ * tool execution.
  *
- * GET 返回当前模型定义，浏览器用它初始化 Agent。
+ * GET returns the current model definition, which the browser uses to initialize the agent.
  */
 
 export const runtime = 'nodejs'
@@ -48,7 +50,7 @@ function missingKeyMessage(name: string) {
   return `服务端未配置 ${name}。请复制 .env.example 为 .env.local 并填入，然后重启 dev server。`
 }
 
-/** 去掉 partial 字段，只发浏览器重建消息所需的增量 */
+/** Drop the partial field and send only the delta the browser needs to rebuild the message */
 function toProxyEvent(event: AssistantMessageEvent): ProxyAssistantMessageEvent | undefined {
   switch (event.type) {
     case 'start':
@@ -80,7 +82,7 @@ function toProxyEvent(event: AssistantMessageEvent): ProxyAssistantMessageEvent 
     case 'toolcall_end':
       return { type: 'toolcall_end', contentIndex: event.contentIndex, toolCall: event.toolCall }
     case 'done':
-      // streamProxy 的协议里没有 deferred（延迟工具），归为普通结束
+      // streamProxy's protocol has no `deferred` (deferred tools), so treat it as a normal stop
       return { type: 'done', reason: event.reason === 'deferred' ? 'stop' : event.reason, usage: event.message.usage }
     case 'error':
       return { type: 'error', reason: event.reason, errorMessage: event.error.errorMessage, usage: event.error.usage }
@@ -89,7 +91,7 @@ function toProxyEvent(event: AssistantMessageEvent): ProxyAssistantMessageEvent 
   }
 }
 
-/** 浏览器初始化 Agent 时取模型定义（不含任何密钥） */
+/** Model definition fetched when the browser initializes the agent (contains no secrets) */
 export async function GET() {
   const config = getLlmConfig()
   return json(200, { provider: config.provider, model: config.model, missing: config.missing ?? null })
@@ -113,7 +115,8 @@ export async function POST(req: NextRequest) {
   }
   if (messages.length > MAX_MESSAGES) return json(413, { error: '对话轮数过多，请新建对话。' })
 
-  // 系统提示由服务端拼装：指令 + Strudel skill 的 SKILL.md（速查 + 资料索引；走 prompt cache，不经过浏览器）
+  // The system prompt is assembled server-side: instructions + the Strudel skill's SKILL.md
+  // (cheatsheet + doc index; served from the prompt cache and never sent through the browser)
   const context: Context = {
     systemPrompt: `${AGENT_INSTRUCTIONS}\n\n${getSkillPrompt()}`,
     messages,
@@ -133,7 +136,7 @@ export async function POST(req: NextRequest) {
           if (proxyEvent) send(proxyEvent)
         }
       } catch (err) {
-        // pi-ai 约定流内不抛错，这里兜底（例如缺少 auth 时会同步抛）
+        // pi-ai promises not to throw inside the stream; this is the fallback (a missing auth token, say, throws synchronously)
         send({
           type: 'error',
           reason: req.signal.aborted ? 'aborted' : 'error',

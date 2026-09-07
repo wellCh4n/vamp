@@ -5,7 +5,7 @@ import { and, asc, count, desc, eq, sql } from 'drizzle-orm'
 import { getDb } from '@/db'
 import { messages, projects, projectVersions, sessions, type Project, type Session } from '@/db/schema'
 
-/** 数据访问层：所有 API 路由和服务端页面都走这里 */
+/** Data access layer: every API route and server-rendered page goes through here */
 
 export interface ProjectSummary extends Project {
   sessionCount: number
@@ -43,7 +43,8 @@ export async function renameProject(id: string, name: string): Promise<Project |
 }
 
 /**
- * 更新工程代码并记一条版本。代码没变时不记版本（手动编辑的防抖保存会频繁调用）。
+ * Update the project code and record a version. Unchanged code records no version (the debounced
+ * save for manual edits calls this often).
  */
 export async function saveProjectCode(id: string, code: string, summary: string, sessionId: string | null): Promise<Project | null> {
   const db = await getDb()
@@ -100,7 +101,7 @@ export async function deleteSession(id: string): Promise<boolean> {
   return deleted.length > 0
 }
 
-/** 追加消息，seq 接着已有的最大值往后排 */
+/** Append messages, continuing seq from the current maximum */
 export async function appendMessages(sessionId: string, items: unknown[]): Promise<number> {
   if (items.length === 0) return 0
   const db = await getDb()
@@ -123,7 +124,7 @@ export interface ProjectTreeNode extends Project {
   sessions: Session[]
 }
 
-/** 侧边栏用：所有工程及其会话（按更新时间倒序） */
+/** For the sidebar: every project and its sessions, newest updated first */
 export async function listProjectTree(): Promise<ProjectTreeNode[]> {
   const db = await getDb()
   const projectRows = await db.select().from(projects).orderBy(desc(projects.updatedAt))
@@ -137,7 +138,7 @@ export async function listProjectTree(): Promise<ProjectTreeNode[]> {
   return projectRows.map((p) => ({ ...p, sessions: byProject.get(p.id) ?? [] }))
 }
 
-/** 工程最近的会话；没有就建一个 */
+/** The project's most recent session, creating one if there is none */
 export async function latestOrNewSession(projectId: string): Promise<Session | null> {
   const db = await getDb()
   const [latest] = await db.select().from(sessions).where(eq(sessions.projectId, projectId)).orderBy(desc(sessions.updatedAt)).limit(1)

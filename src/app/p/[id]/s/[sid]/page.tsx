@@ -12,7 +12,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
   if (!isUuid(id) || !isUuid(sid)) notFound()
   const [projectData, sessionData] = await Promise.all([getProject(id), getSession(sid)])
   if (!projectData) notFound()
-  // 会话不存在或不属于这个工程：回到工程默认会话
+  // Session missing or belonging to another project: fall back to the project's default session
   if (!sessionData || sessionData.session.projectId !== id) redirect(`/p/${id}`)
 
   const project = {

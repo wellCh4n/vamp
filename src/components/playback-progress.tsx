@@ -5,9 +5,11 @@ import { useEffect, useRef } from 'react'
 import { subscribeTransport } from '@/lib/strudel'
 
 /**
- * 播放中的速度显示。pattern 是无限循环的，没有总长度，所以不画进度条，
- * 只显示 BPM（按 1 cycle = 4 拍换算，对应 setcpm(bpm/4) 的写法；代码里改了速度会跟着变）。
- * 每帧回调里直接改 DOM 而不走 React state，避免整个工作台重渲染。
+ * Tempo readout during playback. A pattern loops forever and has no total length, so there is no
+ * progress bar, only a BPM readout (converted as 1 cycle = 4 beats, matching setcpm(bpm/4); it
+ * follows tempo changes made in the code).
+ * The per-frame callback writes to the DOM directly instead of React state, so the whole studio
+ * does not re-render.
  */
 export function PlaybackBpm() {
   const ref = useRef<HTMLSpanElement>(null)

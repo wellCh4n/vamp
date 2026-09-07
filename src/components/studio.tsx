@@ -99,8 +99,9 @@ function useEngine() {
 }
 
 /**
- * 工作台：中间是当前会话的对话，右侧是工程代码。
- * 切换会话 / 工程时由路由重新挂载（key 见 studio-loader），这里不处理切换。
+ * The studio: the current session's conversation in the middle, the project's code on the right.
+ * Switching session or project remounts it through the router (see the key in studio-loader), so
+ * this component does not handle switching itself.
  */
 export function Studio({ project, session, messages }: StudioProps) {
   const engine = useEngine();
@@ -117,7 +118,7 @@ export function Studio({ project, session, messages }: StudioProps) {
   const [title, setTitle] = useState(session.title);
   const [visualization, setVisualizationMode] = useVisualization();
   const editorRef = useRef<StrudelEditorHandle>(null);
-  // 最新代码的镜像，供快捷键和 Agent 回调读取（避免闭包里的旧值）
+  // Mirror of the latest code for keyboard shortcuts and agent callbacks to read (avoids stale closure values)
   const codeRef = useRef(code);
   const lastSavedRef = useRef(project.code);
   const titledRef = useRef(
@@ -126,12 +127,12 @@ export function Studio({ project, session, messages }: StudioProps) {
 
   useEffect(() => {
     void warmup();
-    // 播放是工程级别的：进入别的工程时把上一个工程的播放停掉
+    // Playback is per project: stop the previous project's playback when entering another one
     const owner = getPlayingOwner();
     if (owner && owner !== project.id) stop();
   }, [project.id]);
 
-  // pianoroll：canvas 按 devicePixelRatio 设尺寸，跟随容器大小变化
+  // pianoroll: size the canvas by devicePixelRatio and follow the container's size
   const rollRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const el = rollRef.current;
@@ -151,7 +152,7 @@ export function Studio({ project, session, messages }: StudioProps) {
     };
   }, []);
 
-  /** 第一次发消息：用这句话给会话起名 */
+  /** First message of a session: name the session after it */
   const ensureSession = useCallback(
     async (firstText: string) => {
       if (!titledRef.current) {
@@ -176,7 +177,7 @@ export function Studio({ project, session, messages }: StudioProps) {
     [],
   );
 
-  // 手动编辑：停止输入 1.5 秒后保存为一个版本
+  // Manual edits: save a version 1.5s after typing stops
   useEffect(() => {
     if (code === lastSavedRef.current) return;
     const timer = setTimeout(async () => {
@@ -209,7 +210,7 @@ export function Studio({ project, session, messages }: StudioProps) {
 
   const handleStop = useCallback(() => stop(), []);
 
-  // 播放 / 暂停一个键：播放中按下是暂停；暂停且代码没改就从原处继续；否则重新求值播放
+  // One key for play / pause: pressing while playing pauses; pressing while paused with unchanged code resumes in place; otherwise re-evaluate and play
   const handleToggle = useCallback(() => {
     if (engine.started) {
       pause();
@@ -228,7 +229,7 @@ export function Studio({ project, session, messages }: StudioProps) {
     editorRef.current?.setCode(next);
   }, []);
 
-  // Agent 的工具执行：写入编辑器、播放、成功后记一个版本
+  // Agent tool execution: write to the editor, play, and record a version on success
   const applyCode = useCallback(
     async (next: string, summary: string): Promise<ApplyResult> => {
       replaceCode(next);
@@ -239,7 +240,7 @@ export function Studio({ project, session, messages }: StudioProps) {
         const error = getState().error;
         if (!ok || error)
           return { ok: false, error: error ?? "代码没有产生可播放的 pattern" };
-        // 音色不存在这类错误只在触发时才会报，等一小段时间再判定
+        // Errors like a missing sound only surface when the event fires, so wait a moment before deciding
         const runtimeErrors = await waitForRuntimeErrors(since);
         if (runtimeErrors.length) {
           return {
@@ -285,7 +286,7 @@ export function Studio({ project, session, messages }: StudioProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, [handlePlay, handleStop]);
 
-  // 只在需要用户知道的时候显示：音色还在加载、引擎初始化失败。就绪 / 正在播放看工具栏就知道，不用提示
+  // Only surface what the user needs to know: sounds still loading, or engine init failure. Ready / playing is already visible in the toolbar
   const statusBadge = (() => {
     if (engine.status === "loading")
       return <Badge variant="secondary">加载音色中…</Badge>;
@@ -308,14 +309,14 @@ export function Studio({ project, session, messages }: StudioProps) {
         {statusBadge && <div className="ml-1 shrink-0">{statusBadge}</div>}
       </header>
 
-      {/* 宽屏左右分栏、窄屏上下分栏，分隔线可拖拽，比例记在本地 */}
+      {/* Side-by-side on wide screens, stacked on narrow ones; the divider is draggable and the ratio is persisted locally */}
       <ResizablePanelGroup
         orientation={wide ? "horizontal" : "vertical"}
         groupRef={studioLayout.groupRef}
         onLayoutChanged={studioLayout.onLayoutChanged}
         className="min-h-0 flex-1"
       >
-        {/* 对话 */}
+        {/* Conversation */}
         <ResizablePanel
           id="chat"
           defaultSize="40"
@@ -333,7 +334,7 @@ export function Studio({ project, session, messages }: StudioProps) {
         </ResizablePanel>
         <ResizableHandle />
 
-        {/* 代码 */}
+        {/* Code */}
         <ResizablePanel
           id="code"
           defaultSize="60"
@@ -410,7 +411,7 @@ export function Studio({ project, session, messages }: StudioProps) {
               速查
             </Button>
           </div>
-          {/* 编辑器、可视化和状态条贴边铺满，与左侧对话面板保持同一节奏，不再套卡片；编辑器和可视化之间可上下拖拽 */}
+          {/* Editor, visualizer and status bar run edge to edge to match the chat panel's rhythm, with no card wrapper; the editor and visualizer can be resized vertically */}
           <div className="flex min-h-0 flex-1 flex-col">
             <ResizablePanelGroup
               orientation="vertical"

@@ -4,34 +4,36 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 /**
- * skills/ 下各 skill 的服务端读取：
- * - 每个 skill 目录一个 SKILL.md，正文（去掉 frontmatter）按顺序拼进系统提示：strudel 在前，其余按目录名排序。
- * - 其余 markdown 由 Agent 通过 read_doc / search_docs 工具按需读取。
- *   路径规则：strudel 是默认 skill，路径相对 skills/strudel/（如 learn/effects.md）；
- *   其他 skill 的路径带目录名前缀（如 music-theory/melody.md）。
+ * Server-side loading of the skills under skills/:
+ * - Each skill directory has one SKILL.md, whose body (frontmatter stripped) is concatenated into
+ *   the system prompt in order: strudel first, the rest sorted by directory name.
+ * - Every other markdown file is read on demand by the agent through the read_doc / search_docs tools.
+ *   Path rules: strudel is the default skill, so its paths are relative to skills/strudel/ (e.g.
+ *   learn/effects.md); other skills are prefixed with their directory name (e.g. music-theory/melody.md).
  *
- * 启动后整目录读进内存（约 1MB）；开发模式下文件有改动会自动重读。
+ * The whole directory (about 1MB) is read into memory at startup; in development it is re-read
+ * whenever a file changes.
  */
 
 const SKILLS_DIR = path.join(process.cwd(), 'skills')
-/** 默认 skill：路径不带前缀 */
+/** The default skill: its paths carry no prefix */
 const DEFAULT_SKILL = 'strudel'
-/** read_doc 单次最多返回的字符数，超出时只返回大纲 */
+/** Maximum characters one read_doc call returns; beyond that it returns only an outline */
 export const MAX_DOC_CHARS = 24_000
 const MAX_SEARCH_RESULTS = 20
 
 interface SkillFile {
-  /** 对 Agent 可见的路径：默认 skill 不带前缀，其他 skill 带 `<skill>/` 前缀 */
+  /** The path as the agent sees it: no prefix for the default skill, a `<skill>/` prefix otherwise */
   path: string
   skill: string
-  /** 相对 skill 目录的路径 */
+  /** Path relative to the skill directory */
   rel: string
   content: string
   lines: string[]
 }
 
 let cache: Map<string, SkillFile> | undefined
-/** 开发模式下用来判断缓存是否过期：目录里 .md 的最新修改时间 */
+/** Used in development to detect a stale cache: the newest mtime among the directory's .md files */
 let cacheStamp = 0
 let looseIndex: Map<string, string> | undefined
 
@@ -45,7 +47,7 @@ function latestMtime(dir: string): number {
   return latest
 }
 
-/** 有 SKILL.md 的目录才算 skill；默认 skill 排最前 */
+/** Only a directory with a SKILL.md counts as a skill; the default skill sorts first */
 function skillDirs(): string[] {
   return fs
     .readdirSync(SKILLS_DIR, { withFileTypes: true })
@@ -59,7 +61,7 @@ function publicPath(skill: string, rel: string) {
 }
 
 function loadAll(): Map<string, SkillFile> {
-  // 生产环境只读一次；开发时 npm run skill:build 或手改 markdown 后不用重启 dev server
+  // Read once in production; in development this avoids restarting the dev server after `npm run skill:build` or a manual markdown edit
   if (cache && process.env.NODE_ENV !== 'development') return cache
   if (cache && latestMtime(SKILLS_DIR) === cacheStamp) return cache
   looseIndex = undefined
@@ -87,7 +89,7 @@ function loadAll(): Map<string, SkillFile> {
 
 const isSkillIndex = (f: SkillFile) => f.rel === 'SKILL.md'
 
-/** 所有 skill 的 SKILL.md 正文（不含 frontmatter），拼进系统提示 */
+/** The SKILL.md bodies of every skill (frontmatter excluded), concatenated into the system prompt */
 export function getSkillPrompt(): string {
   const files = loadAll()
   const parts = skillDirs()
@@ -114,7 +116,7 @@ function normalizePath(p: string) {
     .replace(/\\/g, '/')
 }
 
-/** 宽松匹配用的键：小写、去 .md、驼峰转连字符（模型常把 funky-drummer 写成 FunkyDrummer） */
+/** Key for loose matching: lowercased, .md stripped, camelCase hyphenated (the model often writes FunkyDrummer for funky-drummer) */
 function looseKey(p: string) {
   return p
     .replace(/\.md$/, '')
@@ -152,11 +154,11 @@ export interface ReadResult {
   path: string
   heading?: string
   content: string
-  /** 内容被截断时给出大纲，提示用 heading 再读 */
+  /** When the content is truncated, return an outline suggesting a re-read with a heading */
   truncated?: boolean
 }
 
-/** 读一个文件，或文件里的一个标题段落（从该标题到下一个同级或更高级标题） */
+/** Read a whole file, or one heading section of it (from that heading to the next heading at the same or a higher level) */
 export function readDoc(rawPath: string, heading?: string): ReadResult {
   const rel = normalizePath(rawPath)
   const file = resolveFile(rel)
@@ -201,8 +203,10 @@ export interface SearchHit {
 }
 
 /**
- * 全文搜索：所有词都出现在同一行（不区分大小写）才算命中；标题行和函数索引优先。
- * 返回命中行及其所在的最近标题，方便随后用 read_doc(path, heading) 读整段。
+ * Full-text search: a line matches only when every term appears on it (case-insensitively); heading
+ * lines and the function index rank first.
+ * Returns the matching line together with its nearest heading, so a follow-up read_doc(path, heading)
+ * can pull the whole section.
  */
 export function searchDocs(query: string, limit = MAX_SEARCH_RESULTS): SearchHit[] {
   const terms = query

@@ -1,8 +1,8 @@
 # Visualization
 
-pianoroll、scope、spectrum、spiral、pitchwheel 等可视化函数（本项目编辑器下方已自带 pianoroll / 波形 / 频谱，一般不需要在代码里调用）。
+Visualization functions such as pianoroll, scope, spectrum, spiral and pitchwheel (this project already shows a pianoroll / scope / spectrum below the editor, so calling them from code is rarely needed).
 
-共 8 项。每项：名称、同义名、说明、参数、示例。
+8 entries. Each one lists name, synonyms, description, parameters and examples.
 
 ## Other
 

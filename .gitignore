@@ -41,8 +41,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# strudel 源码缓存（npm run skill:build）
+# strudel source cache (npm run skill:build)
 /.cache
 
-# 手动下载的采样包（已转换到 public/samples/，不进仓库）
+# manually downloaded sample packs (converted into public/samples/, not committed)
 /*.zip

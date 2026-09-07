@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 
-/** 订阅一个 CSS 媒体查询（服务端渲染时为 false，客户端 hydration 后立即纠正） */
+/** Subscribe to a CSS media query (false during server rendering, corrected right after hydration) */
 export function useMediaQuery(query: string) {
   return useSyncExternalStore(
     (onChange) => {
@@ -15,7 +15,7 @@ export function useMediaQuery(query: string) {
   );
 }
 
-/** 与 Tailwind 的 lg 断点一致 */
+/** Matches Tailwind's lg breakpoint */
 export function useWideScreen() {
   return useMediaQuery("(min-width: 1024px)");
 }

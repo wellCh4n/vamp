@@ -5,7 +5,7 @@ import { isUuid } from '@/lib/api-utils'
 
 export const dynamic = 'force-dynamic'
 
-/** 点开工程 = 进入它最近的会话（没有就建一个） */
+/** Opening a project means entering its most recent session (creating one if there is none) */
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   if (!isUuid(id)) notFound()

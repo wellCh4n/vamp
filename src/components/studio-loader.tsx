@@ -5,7 +5,7 @@ import { Loader2Icon } from 'lucide-react'
 
 import type { StudioProps } from '@/components/studio'
 
-// Strudel 和 CodeMirror 在 import 时就会访问 window，只能在浏览器加载
+// Strudel and CodeMirror touch window at import time, so they can only load in the browser
 const Studio = dynamic(() => import('@/components/studio').then((m) => m.Studio), {
   ssr: false,
   loading: () => (
@@ -17,6 +17,6 @@ const Studio = dynamic(() => import('@/components/studio').then((m) => m.Studio)
 })
 
 export function StudioLoader(props: StudioProps) {
-  // 换会话 / 换工程时整体重挂，避免旧状态串到新会话
+  // Remount entirely when the session or project changes, so old state cannot leak into the new session
   return <Studio key={`${props.project.id}:${props.session.id}`} {...props} />
 }

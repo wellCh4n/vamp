@@ -1,8 +1,8 @@
 # Sound & effect controls
 
-声音参数和效果器参数。每个控制既可以当函数调用（`lpf(1000)`），也可以当 pattern 方法链式调用（`.lpf("<500 2000>")`），参数都可以是 pattern / mini-notation。
+Sound and effect parameters. Every control can be called as a function (`lpf(1000)`) or chained as a pattern method (`.lpf("<500 2000>")`), and every argument can be a pattern / mini-notation.
 
-共 208 项。每项：名称、同义名、说明、参数、示例。
+208 entries. Each one lists name, synonyms, description, parameters and examples.
 
 ## Sound & samples
 
