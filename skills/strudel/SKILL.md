@@ -75,7 +75,7 @@ The function equivalents: `*2` = `.fast(2)`, `/2` = `.slow(2)`, `(3,8)` = `.eucl
 - Chords: `note("[c,e,g]")`.
 - Scales: `n("0 2 4 6").scale("C:minor")`, spelled `root[octave]:type`, e.g. `"A2:minor:pentatonic"`, and patternable as `.scale("<C:major D:mixolydian>/4")`. Common ones: `major minor dorian mixolydian lydian pentatonic minor:pentatonic major:pentatonic blues`.
 - `.transpose(7)`, `.scaleTranspose(2)`, `.add("<0 5 7>")`.
-- Chord symbols: `chord("<C^7 A7b13 Dm7 G7>").voicing()`, with `.anchor("c5")` and `.mode("below")`; `n("0 1 2 3").chord("<C Am F G>").voicing()` as an arpeggio; `"<C^7 Dm7>".rootNotes(2).note()` for a bass line; `.arp("0 [0,2] 1")` to arpeggiate.
+- Chord symbols: `chord("<C^7 A7b13 Dm7 G7>").voicing()`, with `.anchor("c5")` and `.mode("below")`; `n("0 1 2 3").chord("<C Am F G>").voicing()` as an arpeggio; `"<C^7 Dm7>".rootNotes(2).note()` for a bass line — `chord()` and `.note()` are alternative wrappers, so use exactly one: `chord(prog).rootNotes(2)` or `prog.rootNotes(2).note()`. Combining them double-wraps the value into `{note:{note:"C2"}}`, which makes no sound; `.arp("0 [0,2] 1")` to arpeggiate.
 - `.piano()`: the piano sound plus automatic panning by pitch.
 
 ## Effects (every parameter takes a number, mini-notation or a signal; most support the `a:b:c` shorthand)

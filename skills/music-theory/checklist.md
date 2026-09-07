@@ -19,7 +19,7 @@ const prog = "<C Am F G>"          // one chord per bar, four bars per round
 
 $: s("bd ~ sd ~, hh*8").bank("RolandTR909").gain(".9 .6")
 $: chord(prog).voicing().s("gm_epiano1").room(.3).gain(.6)
-$: chord(prog).rootNotes(2).note().s("gm_acoustic_bass").clip(.9)
+$: chord(prog).rootNotes(2).s("gm_acoustic_bass").clip(.9)
 $: n("<[0 2 4 2] [0 ~ 4 7] [2 4 5 4] [4 2 0 ~]>").scale(key).s("piano").add(note(12))
 ```
 

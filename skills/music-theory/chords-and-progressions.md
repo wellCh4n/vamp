@@ -8,7 +8,7 @@ The rule in one line: **a progression of four or eight bars with one chord per b
 const prog = "<C Am F G>"                       // one chord per bar; "<C@2 F G>" gives C two bars
 $: chord(prog).voicing().s("gm_epiano1")         // voices the chords automatically, with smooth voice leading
 $: chord(prog).voicing().anchor("c5").mode("below")   // keep every voiced note below c5
-$: chord(prog).rootNotes(2).note().s("gm_acoustic_bass") // bass on the roots, octave 2
+$: chord(prog).rootNotes(2).s("gm_acoustic_bass") // bass on the roots, octave 2
 $: n("0 1 2 3").chord(prog).voicing()                    // as an arpeggio: 0 1 2 3 index the voiced notes
 $: chord(prog).voicing().arp("0 [0,2] 1 2")              // another way to arpeggiate
 ```

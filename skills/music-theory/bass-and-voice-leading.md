@@ -6,12 +6,12 @@ The rule in one line: **the bass follows the roots and the kick; each voice take
 
 1. **Held roots** (the safest):
    ```js
-   $: chord(prog).rootNotes(2).note().s("gm_acoustic_bass").clip(.95)
+   $: chord(prog).rootNotes(2).s("gm_acoustic_bass").clip(.95)
    ```
 2. **Rhythmized roots** (most genres): follow the kick's placement.
    ```js
-   $: chord(prog).rootNotes(2).note().struct("x ~ x ~ ~ x ~ x").s("sawtooth").lpf(400)
-   $: chord(prog).rootNotes(2).note().ply("<2 4>").s("gm_synth_bass_1").clip(.5)   // an eighth- or sixteenth-note groove
+   $: chord(prog).rootNotes(2).struct("x ~ x ~ ~ x ~ x").s("sawtooth").lpf(400)
+   $: chord(prog).rootNotes(2).ply("<2 4>").s("gm_synth_bass_1").clip(.5)   // an eighth- or sixteenth-note groove
    ```
 3. **Root plus fifth / octave / passing tones** (a melodic bass): write it as degrees, where the fifth is +4 and the octave +7, and use a passing tone before the next chord.
    ```js

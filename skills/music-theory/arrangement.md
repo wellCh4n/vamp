@@ -22,7 +22,7 @@ intro (4) -> A main section (8) -> B chorus / climax (8) -> A' (8) -> outro (4)
 setcpm(110/4)
 const key = "A:minor", prog = "<Am F C G>"
 const drums = s("bd ~ sd ~, hh*8").bank("RolandTR909")
-const bass = chord(prog).rootNotes(2).note().struct("x ~ x x").s("sawtooth").lpf(400)
+const bass = chord(prog).rootNotes(2).struct("x ~ x x").s("sawtooth").lpf(400)
 const chords = chord(prog).voicing().s("gm_epiano1").room(.4).gain(.6)
 const lead = n("<[0 2 4 2] [5 4 2 0]>").scale(key).add(note(12)).s("piano")
 
